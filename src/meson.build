@@ -1,0 +1,25 @@
+journaling_ui_sources = [
+  'ui/window.vala',
+]
+
+journaling_sources = [
+  'main.vala',
+  'application.vala',
+  journaling_ui_sources
+]
+
+journaling_deps = [
+  dependency('gtk4'),
+  dependency('libadwaita-1', version: '>= 1.4'),
+]
+
+journaling_sources += gnome.compile_resources(
+  'journaling-resources',
+  'journaling.gresource.xml',
+  c_name: 'journaling',
+)
+
+executable('journaling', journaling_sources,
+  dependencies: journaling_deps,
+       install: true,
+)

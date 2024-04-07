@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="journaling">
+	<schema id="com.github.pedromiguel_dev.journaling" path="/com/github/pedromiguel_dev/journaling/">
+	  <key name="width" type="i">
+      <default>800</default>
+    </key>
+    <key name="height" type="i">
+      <default>600</default>
+    </key>
+	</schema>
+</schemalist>

@@ -27,7 +27,6 @@ namespace Journaling {
             }
         }
 
-
         public Application () {
             Object (application_id: "com.github.pedromiguel_dev.journaling", flags: ApplicationFlags.DEFAULT_FLAGS);
         }

@@ -3,3 +3,7 @@
   padding: 20px;
   border-radius: 100%;
 }
+
+.lock-icon-image-invert {
+  filter: invert(1);
+}

@@ -1,10 +1,10 @@
 journaling_ui_sources = [
   'utils/PasswordManager.vala',
-  'ui/window.vala',
-  'ui/MainNavigation.vala',
-  'ui'/ 'pages' / 'Home.vala',
-  'ui'/ 'pages' / 'IncrementCount.vala',
-  'ui'/ 'pages' / 'LockScreen.vala'
+  'window.vala',
+  'MainNavigation.vala',
+  'pages' / 'Home.vala',
+  'pages' / 'IncrementCount.vala',
+  'pages' / 'LockScreen.vala'
 ]
 
 journaling_sources = [

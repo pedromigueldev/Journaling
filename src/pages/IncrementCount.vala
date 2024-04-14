@@ -35,6 +35,7 @@ namespace Journaling {
         }
 
         public IncrementCount () {
+            this.set_tag ("home");
             this.set_title ("Home");
             this._label_count = new Gtk.Label(this.counter.to_string ("%i"));
             this.set_child (this._container);

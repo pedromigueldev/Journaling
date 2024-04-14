@@ -18,24 +18,27 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 namespace Journaling {
-public class MainNavigation : Gtk.Box {
+    public class MainNavigation : Gtk.Box {
+        private Adw.ApplicationWindow Window;
+        public Adw.NavigationView Views = new Adw.NavigationView ();
+        public LockScreen lock;
 
-    private Adw.ApplicationWindow Window;
-    public Adw.NavigationView Views = new Adw.NavigationView ();
+        public MainNavigation (GLib.Settings settings, Adw.ApplicationWindow Window) {
+            this.Window = Window;
 
-    public MainNavigation (GLib.Settings settings, Adw.ApplicationWindow  Window) {
-        this.Window = Window;
+            this.set_hexpand (true);
+            this.set_vexpand (true);
+            _build_ui ();
+            this.append (Views);
+        }
 
-        this.set_hexpand (true);
-        this.set_vexpand (true);
-        _build_ui();
-        this.append (Views);
+        private void _build_ui () {
+            this.lock = new LockScreen (this.Window, this);
 
+            Views.add (new IncrementCount ());
+            Views.add (lock);
+
+            Views.push_by_tag ("locked");
+        }
     }
-
-    private void _build_ui () {
-        Views.add  (new LockScreen(Window));
-        Views.add  (new IncrementCount ());
-    }
-}
 }

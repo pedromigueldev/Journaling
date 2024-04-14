@@ -18,7 +18,6 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 namespace Journaling {
-
     public class Window : Adw.ApplicationWindow {
         private MainNavigation _main_navigation;
 
@@ -30,7 +29,7 @@ namespace Journaling {
             this.icon_name = app.application_id;
             this._main_navigation = new MainNavigation (settings, this);
 
-            _build_ui(settings);
+            _build_ui (settings);
             settings.bind ("width", this, "default-width", SettingsBindFlags.DEFAULT);
             settings.bind ("height", this, "default-height", SettingsBindFlags.DEFAULT);
         }
@@ -40,7 +39,5 @@ namespace Journaling {
             handle.child = this._main_navigation;
             this.content = handle;
         }
-
-
     }
 }

@@ -18,151 +18,27 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 namespace Journaling {
-    public class MainNavigation : Gtk.Box {
-
-        public Adw.NavigationView Views = new Adw.NavigationView ();
-
-        public MainNavigation () {
-            this.set_hexpand (true);
-            this.set_vexpand (true);
-            _build_ui();
-            this.append (Views);
-
-        }
-
-        private void _build_ui () {
-            Views.add  (new LockScreen());
-            Views.add  (new IncrementCount ());
-        }
-    }
-
-    public class WellcomeScreen : Adw.NavigationPage {}
-    public class LockScreen     : Adw.NavigationPage {
-        private Adw.ToolbarView _toolbar = new Adw.ToolbarView ();
-        private Adw.HeaderBar _headerBar = new Adw.HeaderBar();
-        private Gtk.Button _unlock_button = new Gtk.Button ();
-        private Gtk.Box _container = new Gtk.Box (Gtk.Orientation.VERTICAL, 10);
-
-        private bool _isLocked = true;
-        public bool isLocked {
-            get {
-                return this._isLocked;
-            } private set {
-                this._isLocked = value;
-            }
-        }
-
-        public LockScreen  () {
-            this.set_tag ("home");
-            this.set_title ("Home");
-
-            this._toolbar.add_top_bar (this._headerBar);
-            this._toolbar.set_content (this._container);
-            this.set_child (this._toolbar);
-
-            _build_ui();
-        }
-
-        private void _build_ui() {
-            Gtk.Label title = new Gtk.Label("Journal is Locked"){css_classes = {"title-1"}};
-            Gtk.Label sub_title = new Gtk.Label("Use Password to View Journal.");
-
-            Gtk.Box lock_icon_box = new Gtk.Box (Gtk.Orientation.VERTICAL,10) {
-                css_classes = {"lock-icon"},
-                halign = Gtk.Align.CENTER
-            };
-
-            lock_icon_box.append (new Gtk.Image.from_icon_name ("system-lock-screen-symbolic") {
-                pixel_size = 32,
-                css_classes = {"lock-icon-image-invert"},
-                halign = Gtk.Align.CENTER
-            });
-
-            this._unlock_button.set_child (new Gtk.Label("Unlock"){
-                css_classes = {"accent"}
-            });
-            this._unlock_button.set_css_classes ({"pill", "flat"});
-            this._unlock_button.set_halign (Gtk.Align.CENTER);
-
-            this._container.set_hexpand (true);
-            this._container.set_vexpand (true);
-            this._container.set_valign (Gtk.Align.CENTER);
-            this._container.set_halign (Gtk.Align.CENTER);
-
-            this._container.append (lock_icon_box);
-            this._container.append (title);
-            this._container.append (sub_title);
-            this._container.append (this._unlock_button);
-
-        }
-    }
-
-    public class IncrementCount : Adw.NavigationPage {
-        private Gtk.Label _label_count;
-        private Gtk.Button _button_left = new Gtk.Button ();
-        private Gtk.Button _button_right = new Gtk.Button ();
-        private Gtk.Box _container = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 20);
-
-        private int _counter = 0;
-        public int counter {
-            get {
-                return this._counter;
-            } private set {
-                this._counter = value;
-                this._label_count.set_label (this._counter.to_string ("%i"));
-            }
-        }
-
-        public IncrementCount () {
-            this.set_title ("Home");
-            this._label_count = new Gtk.Label(this.counter.to_string ("%i"));
-            this.set_child (this._container);
-            _build_ui();
-        }
-
-        private void _build_ui () {
-            this._container.set_hexpand (true);
-            this._container.set_vexpand (true);
-            this._container.set_valign (Gtk.Align.CENTER);
-            this._container.set_halign (Gtk.Align.CENTER);
-
-            this._button_left.set_css_classes({"flat", "circular"});
-            this._button_left.set_icon_name ("go-previous-symbolic");
-            this._button_left.clicked.connect (() => {this.counter--;});
-
-            this._button_right.set_css_classes({"flat", "circular"});
-            this._button_right.set_icon_name ("go-next-symbolic");
-            this._button_right.clicked.connect (() => {this.counter++;});
-
-            this._label_count.add_css_class ("title-1");
-
-            this._container.append (this._button_left);
-            this._container.append (this._label_count);
-            this._container.append (this._button_right);
-        }
-    }
 
     public class Window : Adw.ApplicationWindow {
-        private MainNavigation _main_navigation = new MainNavigation ();
+        private MainNavigation _main_navigation;
 
         public Window (Application app) {
             Object (application: app);
+            var settings = app.settings;
 
             this.application = app;
             this.icon_name = app.application_id;
+            this._main_navigation = new MainNavigation (settings, this);
 
-            //_build_ui();
-
-            var handle = new Gtk.WindowHandle ();
-            handle.child = this._main_navigation;
-            this.content = handle;
-
-            var settings = app.settings;
+            _build_ui(settings);
             settings.bind ("width", this, "default-width", SettingsBindFlags.DEFAULT);
             settings.bind ("height", this, "default-height", SettingsBindFlags.DEFAULT);
         }
 
-        private void _build_ui () {
+        private void _build_ui (GLib.Settings settings) {
+            var handle = new Gtk.WindowHandle ();
+            handle.child = this._main_navigation;
+            this.content = handle;
         }
 
 

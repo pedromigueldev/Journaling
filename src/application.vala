@@ -20,6 +20,8 @@
 
 namespace Journaling {
     public class Application : Adw.Application {
+        public Gtk.Window Window;
+
         private Settings _settings;
         public Settings settings {
             get {
@@ -44,12 +46,12 @@ namespace Journaling {
         public override void activate () {
             base.activate ();
             _settings = new Settings (application_id);
-            var win = this.active_window;
-            if (win == null) {
-                win = new Journaling.Window (this);
-            }
-            win.present ();
 
+            var Window = this.active_window;
+            if (Window == null) {
+                Window = new Journaling.Window (this);
+            }
+            Window.present ();
         }
 
         private void on_about_action () {

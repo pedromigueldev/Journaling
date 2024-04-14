@@ -1,5 +1,10 @@
 journaling_ui_sources = [
+  'utils/PasswordManager.vala',
   'ui/window.vala',
+  'ui/MainNavigation.vala',
+  'ui'/ 'pages' / 'Home.vala',
+  'ui'/ 'pages' / 'IncrementCount.vala',
+  'ui'/ 'pages' / 'LockScreen.vala'
 ]
 
 journaling_sources = [
@@ -9,6 +14,7 @@ journaling_sources = [
 ]
 
 journaling_deps = [
+  dependency('libsecret-1'),
   dependency('gtk4'),
   dependency('libadwaita-1', version: '>= 1.4'),
 ]

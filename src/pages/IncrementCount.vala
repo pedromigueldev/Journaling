@@ -34,7 +34,7 @@ namespace Journaling {
         }
 
         public IncrementCount () {
-            base(true, Gtk.Orientation.HORIZONTAL, "home", "Home");
+            base(true, Gtk.Orientation.HORIZONTAL, "incremment", "incremment");
 
             this._label_count = new Gtk.Label(this.counter.to_string ("%i"));
 

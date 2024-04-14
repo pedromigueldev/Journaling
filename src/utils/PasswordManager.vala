@@ -20,7 +20,7 @@
 
 namespace Journaling {
     public class PasswordManager : GLib.Object {
-
+        public bool has_tried = false;
         private Secret.Schema password_schema = new Secret.Schema (
              "com.github.pedromiguel_dev.journaling",
              Secret.SchemaFlags.NONE,
@@ -37,24 +37,18 @@ namespace Journaling {
         }
 
         public async string? lookup_password(string pass) throws Error {
-
             string? password = yield Secret.password_lookupv (password_schema, attributes, null);
-
             if (password == null) {
                 debug ("Unable to fetch password in libsecret keyring for %s", "com.github.pedromiguel_dev.journaling");
             }
-
             return password;
         }
 
         public async bool create_password(string password) throws Error {
-
             bool? is_stored =  yield Secret.password_storev(password_schema, attributes, Secret.COLLECTION_DEFAULT, "com.github.pedromiguel_dev.journaling", password, null);
-
             if (is_stored == null) {
                  debug ("Unable to store password for \"%s\" in libsecret keyring", "com.github.pedromiguel_dev.journaling");
             }
-
             return is_stored;
         }
     }

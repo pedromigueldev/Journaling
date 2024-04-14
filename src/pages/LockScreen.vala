@@ -21,7 +21,6 @@ namespace Journaling {
 
     public class LockScreen : PageWrapper {
         private PasswordManager password_manager = new PasswordManager();
-
         private Adw.ApplicationWindow Window;
         private MainNavigation Nav;
         private Gtk.Button _unlock_button = new Gtk.Button();
@@ -86,7 +85,6 @@ namespace Journaling {
                     return;
                 }
                 print("password typed in is %s.\n", entry.text);
-
                 if (password != null)
                     print("password is: %s.\n", password);
 
@@ -158,10 +156,10 @@ namespace Journaling {
             };
 
             lock_icon_box.append(
-                                 new Gtk.Image.from_icon_name("system-lock-screen-symbolic") {
-                pixel_size = 32,
-                css_classes = { "lock-icon-image-invert" },
-                halign = Gtk.Align.CENTER
+                new Gtk.Image.from_icon_name("system-lock-screen-symbolic") {
+                    pixel_size = 32,
+                    css_classes = { "lock-icon-image-invert" },
+                    halign = Gtk.Align.CENTER
             });
             return lock_icon_box;
         }

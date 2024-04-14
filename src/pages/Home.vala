@@ -19,7 +19,75 @@
  */
 
 namespace Journaling {
-    public class Home : Adw.NavigationPage {
-        public Home () {}
+    public class Home : PageWrapper {
+        public Home () {
+            base(true, Gtk.Orientation.VERTICAL, "home", "Home");
+
+            this._headerBar.set_show_title(false);
+            this._container.set_hexpand(true);
+            this._container.set_vexpand(true);
+            this._container.set_valign(Gtk.Align.FILL);
+            this._container.set_halign(Gtk.Align.FILL);
+            this._container.set_spacing(10);
+            this._container.set_margin_start(20);
+            this._container.set_margin_end(20);
+
+            _build_ui();
+        }       
+        private void _build_ui() {
+
+            var overlay = _overlay_mount();
+            var title_box = _title_box_mount();
+
+            this._container.append(title_box);
+            this._container.append(overlay);
+        }
+
+        private Gtk.Overlay _overlay_mount() {
+            Gtk.Overlay overlay = new Gtk.Overlay(){vexpand = true, margin_bottom = 20};
+            Gtk.Box diary_entries = new Gtk.Box(Gtk.Orientation.VERTICAL, 20) {
+                halign = Gtk.Align.FILL,
+                valign = Gtk.Align.FILL
+            };
+
+            overlay.set_child(diary_entries);
+            overlay.add_overlay(new Gtk.Button.from_icon_name("view-sort-descending-rtl-symbolic") {
+                halign = Gtk.Align.CENTER,
+                valign = Gtk.Align.END,
+                hexpand = true,
+                css_classes = {"fill", "circular", "suggested-action", "filter-icon" },
+            });
+
+            diary_entries.append(new Gtk.Button.with_label("Lover"));
+            diary_entries.append(new Gtk.Button.with_label("Lover"));
+            diary_entries.append(new Gtk.Button.with_label("Lover"));
+            diary_entries.append(new Gtk.Button.with_label("Lover"));
+            diary_entries.append(new Gtk.Button.with_label("Lover"));
+            diary_entries.append(new Gtk.Button.with_label("Lover"));
+            diary_entries.append(new Gtk.Button.with_label("Lover"));
+            diary_entries.append(new Gtk.Button.with_label("Lover"));
+
+            return overlay;
+        }
+
+        private Gtk.Box _title_box_mount() {
+            Gtk.Box title_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
+            Gtk.Label title = new Gtk.Label("Journal") {
+                css_classes = { "title-1", "title-bigger" },
+                halign = Gtk.Align.START,
+                valign = Gtk.Align.CENTER,
+            };
+            Gtk.Button filter_button = new Gtk.Button.from_icon_name("view-sort-descending-rtl-symbolic") {
+                halign = Gtk.Align.END,
+                valign = Gtk.Align.CENTER,
+                hexpand = true,
+                css_classes = {"flat", "circular", "filter-icon" }
+            };
+
+            title_box.append(title);
+            title_box.append(filter_button);
+
+            return title_box;
+        }
     }
 }

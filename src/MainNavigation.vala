@@ -35,6 +35,7 @@ namespace Journaling {
         private void _build_ui () {
             this.lock = new LockScreen (this.Window, this);
 
+            Views.add (new Home ());
             Views.add (new IncrementCount ());
             Views.add (lock);
 

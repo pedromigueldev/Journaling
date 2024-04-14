@@ -7,3 +7,11 @@
 .lock-icon-image-invert {
   filter: invert(1);
 }
+
+.title-bigger {
+	font-size: 2.5rem;
+}
+
+.filter-icon {
+  padding: 8px;
+}

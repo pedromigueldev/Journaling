@@ -19,15 +19,12 @@
  */
 namespace Journaling {
 
-    public class LockScreen : Adw.NavigationPage {
+    public class LockScreen : PageWrapper {
         private PasswordManager password_manager = new PasswordManager();
 
         private Adw.ApplicationWindow Window;
         private MainNavigation Nav;
-        private Adw.ToolbarView _toolbar = new Adw.ToolbarView();
-        private Adw.HeaderBar _headerBar = new Adw.HeaderBar() {show_back_button = false};
         private Gtk.Button _unlock_button = new Gtk.Button();
-        private Gtk.Box _container = new Gtk.Box(Gtk.Orientation.VERTICAL, 10);
 
         private bool _isLocked = true;
         public bool isLocked {
@@ -39,16 +36,11 @@ namespace Journaling {
         }
 
         public LockScreen(Adw.ApplicationWindow Window, MainNavigation naview) {
+            base(true, Gtk.Orientation.VERTICAL, "locked", "Locked");
+
             this.Window = Window;
             this.Nav = naview;
             this.can_pop = false;
-
-            this.set_tag("locked");
-            this.set_title("Locked");
-
-            this._toolbar.add_top_bar(this._headerBar);
-            this._toolbar.set_content(this._container);
-            this.set_child(this._toolbar);
 
             _build_ui();
         }

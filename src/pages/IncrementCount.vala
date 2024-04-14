@@ -18,11 +18,10 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 namespace Journaling {
-    public class IncrementCount : Adw.NavigationPage {
+    public class IncrementCount : PageWrapper {
         private Gtk.Label _label_count;
         private Gtk.Button _button_left = new Gtk.Button ();
         private Gtk.Button _button_right = new Gtk.Button ();
-        private Gtk.Box _container = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 20);
 
         private int _counter = 0;
         public int counter {
@@ -35,10 +34,10 @@ namespace Journaling {
         }
 
         public IncrementCount () {
-            this.set_tag ("home");
-            this.set_title ("Home");
+            base(true, Gtk.Orientation.HORIZONTAL, "home", "Home");
+
             this._label_count = new Gtk.Label(this.counter.to_string ("%i"));
-            this.set_child (this._container);
+
             _build_ui();
         }
 

@@ -44,28 +44,35 @@ namespace Journaling {
         }
 
         private Gtk.Overlay _overlay_mount() {
+            var scrolled_window = new Gtk.ScrolledWindow ();
+            scrolled_window.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
+
             Gtk.Overlay overlay = new Gtk.Overlay(){vexpand = true, margin_bottom = 20};
+
             Gtk.Box diary_entries = new Gtk.Box(Gtk.Orientation.VERTICAL, 20) {
                 halign = Gtk.Align.FILL,
-                valign = Gtk.Align.FILL
+                valign = Gtk.Align.FILL,
+                margin_bottom = 60
             };
 
-            overlay.set_child(diary_entries);
+            diary_entries.append(new Gtk.Button.with_label("Lover"));
+            diary_entries.append(new Gtk.Button.with_label("Lover"));
+            diary_entries.append(new Gtk.Button.with_label("Lover"));
+            diary_entries.append(new Gtk.Button.with_label("Lover"));
+            diary_entries.append(new Gtk.Button.with_label("Lover"));
+            diary_entries.append(new Gtk.Button.with_label("Lover"));
+            diary_entries.append(new Gtk.Button.with_label("Lover"));
+            diary_entries.append(new Gtk.Button.with_label("Lover"));
+
+            scrolled_window.set_child(diary_entries);
+
             overlay.add_overlay(new Gtk.Button.from_icon_name("view-sort-descending-rtl-symbolic") {
                 halign = Gtk.Align.CENTER,
                 valign = Gtk.Align.END,
                 hexpand = true,
                 css_classes = {"fill", "circular", "suggested-action", "filter-icon" },
             });
-
-            diary_entries.append(new Gtk.Button.with_label("Lover"));
-            diary_entries.append(new Gtk.Button.with_label("Lover"));
-            diary_entries.append(new Gtk.Button.with_label("Lover"));
-            diary_entries.append(new Gtk.Button.with_label("Lover"));
-            diary_entries.append(new Gtk.Button.with_label("Lover"));
-            diary_entries.append(new Gtk.Button.with_label("Lover"));
-            diary_entries.append(new Gtk.Button.with_label("Lover"));
-            diary_entries.append(new Gtk.Button.with_label("Lover"));
+            overlay.set_child(scrolled_window);
 
             return overlay;
         }

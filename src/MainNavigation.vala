@@ -39,7 +39,7 @@ namespace Journaling {
             Views.add (new IncrementCount ());
             Views.add (lock);
 
-            Views.push_by_tag ("locked");
+            Views.push_by_tag ("home");
         }
     }
 }

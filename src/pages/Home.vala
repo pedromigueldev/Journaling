@@ -36,8 +36,8 @@ namespace Journaling {
         }       
         private void _build_ui() {
 
-            var overlay = _overlay_mount();
             var title_box = _title_box_mount();
+            var overlay = _overlay_mount();
 
             this._container.append(title_box);
             this._container.append(overlay);
@@ -47,32 +47,32 @@ namespace Journaling {
             var scrolled_window = new Gtk.ScrolledWindow ();
             scrolled_window.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
 
-            Gtk.Overlay overlay = new Gtk.Overlay(){vexpand = true, margin_bottom = 20};
-
-            Gtk.Box diary_entries = new Gtk.Box(Gtk.Orientation.VERTICAL, 20) {
-                halign = Gtk.Align.FILL,
-                valign = Gtk.Align.FILL,
-                margin_bottom = 60
+            Gtk.Overlay overlay = new Gtk.Overlay() {
+                vexpand = true,
+                margin_bottom = 20
             };
 
-            diary_entries.append(new Gtk.Button.with_label("Lover"));
-            diary_entries.append(new Gtk.Button.with_label("Lover"));
-            diary_entries.append(new Gtk.Button.with_label("Lover"));
-            diary_entries.append(new Gtk.Button.with_label("Lover"));
-            diary_entries.append(new Gtk.Button.with_label("Lover"));
-            diary_entries.append(new Gtk.Button.with_label("Lover"));
-            diary_entries.append(new Gtk.Button.with_label("Lover"));
-            diary_entries.append(new Gtk.Button.with_label("Lover"));
+            Gtk.ListBox diary_entries = new Gtk.ListBox () {
+                halign = Gtk.Align.FILL,
+                valign = Gtk.Align.START,
+                margin_top = 10,
+                margin_start = 10,
+                margin_end = 10,
+                margin_bottom = 60,
+                css_classes = {"boxed-list"}
+            };
+
+            diary_entries.append (_entry_card("Lover"));
 
             scrolled_window.set_child(diary_entries);
 
-            overlay.add_overlay(new Gtk.Button.from_icon_name("view-sort-descending-rtl-symbolic") {
+            overlay.add_overlay (new Gtk.Button.from_icon_name("list-add-symbolic") {
                 halign = Gtk.Align.CENTER,
                 valign = Gtk.Align.END,
                 hexpand = true,
                 css_classes = {"fill", "circular", "suggested-action", "filter-icon" },
             });
-            overlay.set_child(scrolled_window);
+            overlay.set_child (scrolled_window);
 
             return overlay;
         }
@@ -96,5 +96,12 @@ namespace Journaling {
 
             return title_box;
         }
+
+        private Adw.ActionRow _entry_card(string text) {
+            Adw.ActionRow entry_card = new Adw.ActionRow();
+
+            return entry_card;
+        }
     }
 }
+

@@ -107,9 +107,9 @@ namespace Journaling {
             return title_box;
         }
 
-        private Gtk.Button _entry_card(string text) {
-            var button = new Gtk.Button() {
-                css_classes = {"card"},
+        private Adw.Bin _entry_card(string text) {
+            var card = new Adw.Bin() {
+                css_classes = {"card", "activatable"},
                 overflow = Gtk.Overflow.HIDDEN
             };
             var entry_card = new Gtk.Box(Gtk.Orientation.VERTICAL, 0) {
@@ -129,10 +129,22 @@ namespace Journaling {
                 margin_top = 5,
                 halign = Gtk.Align.FILL
             };
-            var status_bar_button = new Gtk.Button
-            .from_icon_name("view-more-horizontal-symbolic") {
-                css_classes = {"flat", "circular"}
+            var popover_delete = new Gtk.Button.from_icon_name("user-trash-symbolic");
+            var popover_edit = new Gtk.Button.from_icon_name("document-edit-symbolic");
+            var popover_box = new Gtk.Box(Gtk.Orientation.VERTICAL, 6);
+            popover_box.append(popover_edit);
+            popover_box.append(popover_delete);
+
+
+            var status_bar_button = new Gtk.MenuButton() {
+                icon_name = "view-more-horizontal-symbolic",
+                css_classes = {"flat", "circular"},
             };
+            var pop = new Gtk.Popover();
+            pop.set_child(popover_box);
+            status_bar_button.set_popover(pop);
+            status_bar_button.show();
+
             var current_date = new GLib.DateTime.now_local ();
             string date_string = current_date.format("%Y-%m-%d %H:%M:%S");
 
@@ -173,8 +185,8 @@ namespace Journaling {
             entry_card.append(new Gtk.Separator(Gtk.Orientation.HORIZONTAL));
             entry_card.append(status_bar);
 
-            button.set_child(entry_card);
-            return button;
+            card.set_child(entry_card);
+            return card;
         }
     }
 }

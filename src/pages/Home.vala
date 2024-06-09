@@ -45,39 +45,34 @@ namespace Journaling {
         }
 
         private Gtk.Overlay _overlay_mount() {
-            var scrolled_window = new Gtk.ScrolledWindow ();
-            scrolled_window.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
+            var scrolled_window = new Gtk.ScrolledWindow () {
+                vscrollbar_policy = Gtk.PolicyType.AUTOMATIC,
+                vscrollbar_policy =  Gtk.PolicyType.AUTOMATIC
+            };
 
-            Gtk.Overlay overlay = new Gtk.Overlay() {
+            var overlay = new Gtk.Overlay() {
                 vexpand = true,
                 margin_bottom = 20
             };
 
-            var diary_entries = new Gtk.Box (Gtk.Orientation.VERTICAL, 15   ) {
+            var diary_entries = new Test.VBox(
+                _entry_card("asdfs ssssss ssssssssss ssssssss sssssssss sssssssssss sssss sss sssssssss sssss sssss ssssssssssss ssssssssssss sssssssss ssssssssssssss ssssssssss"),
+                _entry_card("Lover"),
+                _entry_card("Lover"),
+                _entry_card("Lover")
+                )
+            {
+                spacing = 20,
                 halign = Gtk.Align.FILL,
                 valign = Gtk.Align.FILL,
-                margin_top = 10,
-                margin_start = 10,
-                margin_end = 10,
-                margin_bottom = 80,
+                margins = { 10, 10, 80, 10 },
                 css_classes = {"clear_bg"}
             };
-
-
-            diary_entries.append (_entry_card("asdfs ssssss ssssssssss ssssssss sssssssss sssssssssss sssss sss sssssssss sssss sssss ssssssssssss ssssssssssss sssssssss ssssssssssssss ssssssssss"));
-            diary_entries.append (_entry_card("Lover"));
-            diary_entries.append (_entry_card("Lover"));
-            diary_entries.append (_entry_card("Lover"));
-            diary_entries.append (_entry_card("Lover"));
-            diary_entries.append (_entry_card("Lover"));
-            diary_entries.append (_entry_card("Lover"));
-            diary_entries.append (_entry_card("Lover"));
-            diary_entries.append (_entry_card("Lover"));
 
             scrolled_window.set_child(diary_entries);
 
             overlay.add_overlay (new Gtk.Button.from_icon_name("list-add-symbolic") {
-                halign = Gtk.Align.CENTER,
+                halign = Gtk.Align.END,
                 valign = Gtk.Align.END,
                 hexpand = true,
                 css_classes = {"fill", "circular", "suggested-action", "filter-icon" },
@@ -88,103 +83,78 @@ namespace Journaling {
         }
 
         private Gtk.Box _title_box_mount() {
-            Gtk.Box title_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
-            Gtk.Label title = new Gtk.Label("Journal") {
+
+            var title = new Gtk.Label("Journal") {
                 css_classes = { "title-1", "title-bigger" },
                 halign = Gtk.Align.START,
                 valign = Gtk.Align.CENTER,
             };
-            Gtk.Button filter_button = new Gtk.Button.from_icon_name("view-sort-descending-rtl-symbolic") {
+
+            var filter_button = new Gtk.Button.from_icon_name("view-sort-descending-rtl-symbolic") {
                 halign = Gtk.Align.END,
                 valign = Gtk.Align.CENTER,
                 hexpand = true,
                 css_classes = {"flat", "circular", "filter-icon" }
             };
 
-            title_box.append(title);
-            title_box.append(filter_button);
-
-            return title_box;
+            return new Test.HBox(
+                title,
+                filter_button
+            );
         }
 
         private Adw.Bin _entry_card(string text) {
+            var current_date = new GLib.DateTime.now_local ();
+            string date_string = current_date.format("%Y-%m-%d %H:%M:%S");
+
+            var popover_box = new Test.VBox (
+                new Gtk.Button.from_icon_name("user-trash-symbolic"),
+                new Gtk.Button.from_icon_name("document-edit-symbolic")
+            ){ spacing = 6 };
+
+            var status_bar = new Test.HBox (
+                 new Gtk.Label(date_string),
+                 new Gtk.Separator (Gtk.Orientation.HORIZONTAL) {
+                    hexpand = true,
+                    css_classes = {"spacer"}
+                },
+                new Gtk.MenuButton() {
+                    icon_name = "view-more-horizontal-symbolic",
+                    css_classes = {"flat", "circular"},
+                    popover = new Gtk.Popover (){ child = popover_box }
+                }
+            ){
+                margins = { 5, 5, 0, 5 },
+                halign = Gtk.Align.FILL
+            };
+
+            var entry_card = new Test.VBox (
+                new Gtk.Picture.for_resource("/com/github/pedromiguel_dev/journaling/img2") { height_request = 190 },
+                new Test.VBox (
+                    new Gtk.Label ("Title") {
+                        css_classes = {"title-1"},
+                        halign = Gtk.Align.START
+                    },
+                    new Gtk.Label (text) {
+                        wrap = true,
+                        lines = 100,
+                        ellipsize = Pango.EllipsizeMode.END,
+                        halign = Gtk.Align.START
+                    }
+                ){
+                    margins = { 10, 10, 10, 10 }
+                },
+                new Gtk.Separator (Gtk.Orientation.HORIZONTAL),
+                status_bar
+            ){
+                spacing = 0,
+                margins = { 5, 5, 5, 5 }
+            };
+
             var card = new Adw.Bin() {
                 css_classes = {"card", "activatable"},
                 overflow = Gtk.Overflow.HIDDEN
             };
-            var entry_card = new Gtk.Box(Gtk.Orientation.VERTICAL, 0) {
-                margin_top = 5,
-                margin_start = 5,
-                margin_bottom = 5,
-                margin_end = 5,
-            };
-            var image = new Gtk.Picture
-            .for_resource("/com/github/pedromiguel_dev/journaling/img2") {
-                height_request = 190
-            };
-
-            var status_bar = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 5) {
-                margin_start = 5,
-                margin_end = 5,
-                margin_top = 5,
-                halign = Gtk.Align.FILL
-            };
-            var popover_delete = new Gtk.Button.from_icon_name("user-trash-symbolic");
-            var popover_edit = new Gtk.Button.from_icon_name("document-edit-symbolic");
-            var popover_box = new Gtk.Box(Gtk.Orientation.VERTICAL, 6);
-            popover_box.append(popover_edit);
-            popover_box.append(popover_delete);
-
-
-            var status_bar_button = new Gtk.MenuButton() {
-                icon_name = "view-more-horizontal-symbolic",
-                css_classes = {"flat", "circular"},
-            };
-            var pop = new Gtk.Popover();
-            pop.set_child(popover_box);
-            status_bar_button.set_popover(pop);
-            status_bar_button.show();
-
-            var current_date = new GLib.DateTime.now_local ();
-            string date_string = current_date.format("%Y-%m-%d %H:%M:%S");
-
-            var status_bar_date = new Gtk.Label(date_string);
-
-            status_bar.append(status_bar_date);
-            status_bar.append(
-                new Gtk.Separator (Gtk.Orientation.HORIZONTAL) {
-                    hexpand = true,
-                    css_classes = {"spacer"}
-                }
-            );
-            status_bar.append(status_bar_button);
-
-
-            var content_box = new Gtk.Box(Gtk.Orientation.VERTICAL, 10) {
-                margin_bottom = 10,
-                margin_start = 10,
-                margin_end = 10,
-                margin_top = 10,
-            };
-            var title = new Gtk.Label ("Title") {
-                css_classes = {"title-1"},
-                halign = Gtk.Align.START
-            };
-            var label = new Gtk.Label (text) {
-                wrap = true,
-                lines = 100,
-                ellipsize = Pango.EllipsizeMode.END,
-                halign = Gtk.Align.START
-            };
-
-            content_box.append(title);
-            content_box.append(label);
-
-            entry_card.append(image);
-            entry_card.append(content_box);
-            entry_card.append(new Gtk.Separator(Gtk.Orientation.HORIZONTAL));
-            entry_card.append(status_bar);
-
             card.set_child(entry_card);
             return card;
         }

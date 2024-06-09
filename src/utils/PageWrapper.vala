@@ -2,7 +2,6 @@ namespace Journaling {
     public class PageWrapper : Adw.NavigationPage {
         protected bool back_button;
 
-
         protected Adw.ToolbarView _toolbar = new Adw.ToolbarView();
         protected Adw.HeaderBar _headerBar = new Adw.HeaderBar();
         protected Gtk.Box _container;

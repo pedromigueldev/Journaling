@@ -36,7 +36,8 @@ namespace Journaling {
         }
 
         public LockScreen(Adw.ApplicationWindow Window, MainNavigation naview) {
-            base(true, Gtk.Orientation.VERTICAL, "locked", "Locked");
+            base(true, "locked", "Locked",
+                 new Gtk.Box(Gtk.Orientation.VERTICAL, 20));
 
             this.Window = Window;
             this.Nav = naview;

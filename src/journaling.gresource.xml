@@ -3,5 +3,8 @@
   <gresource prefix="/com/github/pedromiguel_dev/journaling">
     <file preprocess="xml-stripblanks">gtk/help-overlay.ui</file>
     <file alias="style.css">css/style.css</file>
+    <file alias="img">i.png</file>
+    <file alias="img2">images/img.png</file>
   </gresource>
 </gresources>
+

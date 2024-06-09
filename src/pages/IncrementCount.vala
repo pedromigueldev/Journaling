@@ -34,7 +34,14 @@ namespace Journaling {
         }
 
         public IncrementCount () {
-            base(true, Gtk.Orientation.HORIZONTAL, "incremment", "incremment");
+            base(true, "incremment", "incremment",
+                 new Gtk.Box(Gtk.Orientation.VERTICAL, 10) {
+                    hexpand = true,
+                    vexpand = true,
+                    valign = Gtk.Align.CENTER,
+                    halign = Gtk.Align.CENTER
+                }
+            );
 
             this._label_count = new Gtk.Label(this.counter.to_string ("%i"));
 
@@ -42,10 +49,6 @@ namespace Journaling {
         }
 
         private void _build_ui () {
-            this._container.set_hexpand (true);
-            this._container.set_vexpand (true);
-            this._container.set_valign (Gtk.Align.CENTER);
-            this._container.set_halign (Gtk.Align.CENTER);
 
             this._button_left.set_css_classes({"flat", "circular"});
             this._button_left.set_icon_name ("go-previous-symbolic");

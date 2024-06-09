@@ -15,3 +15,7 @@
 .filter-icon {
   padding: 8px;
 }
+
+.clear_bg {
+	background-color: rgba(0,0,0,0);
+}

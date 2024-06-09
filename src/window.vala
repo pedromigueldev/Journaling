@@ -23,14 +23,14 @@ namespace Journaling {
 
         public Window (Application app) {
             Object (application: app);
-            var settings = app.settings;
+            var settings = app.settings; 
 
             this.application = app;
             this.icon_name = app.application_id;
             this._main_navigation = new MainNavigation (settings, this);
 
             _build_ui (settings);
-            settings.bind ("width", this, "default-width", SettingsBindFlags.DEFAULT);
+            settings.bind ("width", this, "default-width", SettingsBindFlags.DEFAULT); 
             settings.bind ("height", this, "default-height", SettingsBindFlags.DEFAULT);
         }
 

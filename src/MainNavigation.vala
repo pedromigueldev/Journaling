@@ -26,9 +26,9 @@ namespace Journaling {
         public MainNavigation (GLib.Settings settings, Adw.ApplicationWindow Window) {
             this.Window = Window;
 
+            _build_ui ();
             this.set_hexpand (true);
             this.set_vexpand (true);
-            _build_ui ();
             this.append (Views);
         }
 

@@ -21,16 +21,17 @@
 namespace Journaling {
     public class Home : PageWrapper {
         public Home () {
-            base(true, Gtk.Orientation.VERTICAL, "home", "Home");
+            base(true, "home", "Home",
+                new Gtk.Box(Gtk.Orientation.VERTICAL, 10) {
+                    hexpand = true,
+                    vexpand = true,
+                    valign = Gtk.Align.FILL,
+                    halign = Gtk.Align.FILL,
+                    margin_start = 20,
+                    margin_end = 20
+                });
 
             this._headerBar.set_show_title(false);
-            this._container.set_hexpand(true);
-            this._container.set_vexpand(true);
-            this._container.set_valign(Gtk.Align.FILL);
-            this._container.set_halign(Gtk.Align.FILL);
-            this._container.set_spacing(10);
-            this._container.set_margin_start(20);
-            this._container.set_margin_end(20);
 
             _build_ui();
         }       
@@ -52,16 +53,25 @@ namespace Journaling {
                 margin_bottom = 20
             };
 
-            Gtk.ListBox diary_entries = new Gtk.ListBox () {
+            var diary_entries = new Gtk.Box (Gtk.Orientation.VERTICAL, 15   ) {
                 halign = Gtk.Align.FILL,
-                valign = Gtk.Align.START,
+                valign = Gtk.Align.FILL,
                 margin_top = 10,
                 margin_start = 10,
                 margin_end = 10,
-                margin_bottom = 60,
-                css_classes = {"boxed-list"}
+                margin_bottom = 80,
+                css_classes = {"clear_bg"}
             };
 
+
+            diary_entries.append (_entry_card("asdfs ssssss ssssssssss ssssssss sssssssss sssssssssss sssss sss sssssssss sssss sssss ssssssssssss ssssssssssss sssssssss ssssssssssssss ssssssssss"));
+            diary_entries.append (_entry_card("Lover"));
+            diary_entries.append (_entry_card("Lover"));
+            diary_entries.append (_entry_card("Lover"));
+            diary_entries.append (_entry_card("Lover"));
+            diary_entries.append (_entry_card("Lover"));
+            diary_entries.append (_entry_card("Lover"));
+            diary_entries.append (_entry_card("Lover"));
             diary_entries.append (_entry_card("Lover"));
 
             scrolled_window.set_child(diary_entries);
@@ -97,10 +107,74 @@ namespace Journaling {
             return title_box;
         }
 
-        private Adw.ActionRow _entry_card(string text) {
-            Adw.ActionRow entry_card = new Adw.ActionRow();
+        private Gtk.Button _entry_card(string text) {
+            var button = new Gtk.Button() {
+                css_classes = {"card"},
+                overflow = Gtk.Overflow.HIDDEN
+            };
+            var entry_card = new Gtk.Box(Gtk.Orientation.VERTICAL, 0) {
+                margin_top = 5,
+                margin_start = 5,
+                margin_bottom = 5,
+                margin_end = 5,
+            };
+            var image = new Gtk.Picture
+            .for_resource("/com/github/pedromiguel_dev/journaling/img2") {
+                height_request = 190
+            };
 
-            return entry_card;
+            var status_bar = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 5) {
+                margin_start = 5,
+                margin_end = 5,
+                margin_top = 5,
+                halign = Gtk.Align.FILL
+            };
+            var status_bar_button = new Gtk.Button
+            .from_icon_name("view-more-horizontal-symbolic") {
+                css_classes = {"flat", "circular"}
+            };
+            var current_date = new GLib.DateTime.now_local ();
+            string date_string = current_date.format("%Y-%m-%d %H:%M:%S");
+
+            var status_bar_date = new Gtk.Label(date_string);
+
+            status_bar.append(status_bar_date);
+            status_bar.append(
+                new Gtk.Separator (Gtk.Orientation.HORIZONTAL) {
+                    hexpand = true,
+                    css_classes = {"spacer"}
+                }
+            );
+            status_bar.append(status_bar_button);
+
+
+            var content_box = new Gtk.Box(Gtk.Orientation.VERTICAL, 10) {
+                margin_bottom = 10,
+                margin_start = 10,
+                margin_end = 10,
+                margin_top = 10,
+            };
+            var title = new Gtk.Label ("Title") {
+                css_classes = {"title-1"},
+                halign = Gtk.Align.START
+            };
+            var label = new Gtk.Label (text) {
+                wrap = true,
+                lines = 100,
+                ellipsize = Pango.EllipsizeMode.END,
+                halign = Gtk.Align.START
+            };
+
+            content_box.append(title);
+            content_box.append(label);
+
+            entry_card.append(image);
+            entry_card.append(content_box);
+            entry_card.append(new Gtk.Separator(Gtk.Orientation.HORIZONTAL));
+            entry_card.append(status_bar);
+
+            button.set_child(entry_card);
+            return button;
         }
     }
 }

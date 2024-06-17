@@ -17,8 +17,37 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+
+namespace Journaling.Pages {
+
+    public Vui.Page IncrementCount () {
+        var counter = new Vui.Store<int>(0);
+
+        return new Vui.Page ("Incremment")
+        .child (
+            new Vui.VBox(
+                new Vui.Button.from_icon_name ("go-previous-symbolic")
+                    .css_classes ({"flat", "circular"})
+                    .do(() => counter.state++),
+                new Vui.Label ( () =>  counter.state.to_string (), counter)
+                    .css_classes ({"title-1"}),
+                new Vui.Button.from_icon_name ("go-next-symbolic")
+                    .css_classes ({"flat", "circular"})
+                    .do(() => counter.state--),
+                new Vui.Spacer (),
+                new Vui.Label (() => counter.state.to_string (), counter)
+                    .css_classes ({"title-1"})
+            )
+            .spacing(10)
+        )
+        .expand (true, true)
+        .valign (Gtk.Align.CENTER)
+        .halign (Gtk.Align.CENTER);
+    }
+}
+
 namespace Journaling {
-    public class IncrementCount : PageWrapper {
+    public class IncrementCount : Page {
         private Gtk.Label _label_count;
         private Gtk.Button _button_left = new Gtk.Button ();
         private Gtk.Button _button_right = new Gtk.Button ();
@@ -34,21 +63,16 @@ namespace Journaling {
         }
 
         public IncrementCount () {
-            base(true, "incremment", "incremment",
-                 new Gtk.Box(Gtk.Orientation.VERTICAL, 10) {
+            base ("Incremment",
+                new Gtk.Box(Gtk.Orientation.VERTICAL, 10) {
                     hexpand = true,
                     vexpand = true,
                     valign = Gtk.Align.CENTER,
                     halign = Gtk.Align.CENTER
                 }
             );
-
             this._label_count = new Gtk.Label(this.counter.to_string ("%i"));
 
-            _build_ui();
-        }
-
-        private void _build_ui () {
 
             this._button_left.set_css_classes({"flat", "circular"});
             this._button_left.set_icon_name ("go-previous-symbolic");

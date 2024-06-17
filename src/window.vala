@@ -17,7 +17,30 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+
+namespace Journaling.Pages {
+
+    public Vui.Window Window (Journaling.Application app) {
+        var settings = app.settings;
+
+        return new Vui.Window(app)
+            .child (
+                new Vui.HBox (
+                    new Vui.Navigation (
+                        Journaling.Pages.Home (),
+                        Journaling.Pages.IncrementCount ()
+                    )
+                ).expand(true, true)
+            ).bind((window) => {
+                settings.bind ("width", window, "default-width", SettingsBindFlags.DEFAULT);
+                settings.bind ("height", window, "default-height", SettingsBindFlags.DEFAULT);
+            });
+    }
+
+}
 namespace Journaling {
+
+
     public class Window : Adw.ApplicationWindow {
         private MainNavigation _main_navigation;
 

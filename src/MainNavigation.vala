@@ -35,11 +35,11 @@ namespace Journaling {
         private void _build_ui () {
             this.lock = new LockScreen (this.Window, this);
 
-            Views.add (new Home ());
-            Views.add (new IncrementCount ());
+            Views.add (Journaling.Pages.Home ().widget);
+            Views.add (Journaling.Pages.IncrementCount ().widget);
             Views.add (lock);
 
-            Views.push_by_tag ("home");
+            Views.push_by_tag ("incremment");
         }
     }
 }

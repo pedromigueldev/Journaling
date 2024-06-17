@@ -49,7 +49,7 @@ namespace Journaling {
 
             var Window = this.active_window;
             if (Window == null) {
-                Window = new Journaling.Window (this);
+                Window = Journaling.Pages.Window (this).widget;
             }
             Window.present ();
         }

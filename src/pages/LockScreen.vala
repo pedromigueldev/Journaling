@@ -19,7 +19,7 @@
  */
 namespace Journaling {
 
-    public class LockScreen : PageWrapper {
+    public class LockScreen : Page {
 
         private PasswordManager password_manager = new PasswordManager();
         private Adw.ApplicationWindow Window;
@@ -36,14 +36,38 @@ namespace Journaling {
         }
 
         public LockScreen(Adw.ApplicationWindow Window, MainNavigation naview) {
-            base(true, "locked", "Locked",
-                 new Gtk.Box(Gtk.Orientation.VERTICAL, 20));
+            base ("Locked",new Gtk.Box(Gtk.Orientation.VERTICAL, 20));
 
             this.Window = Window;
             this.Nav = naview;
             this.can_pop = false;
 
-            _build_ui();
+            Gtk.Label title = new Gtk.Label("Journal is Locked") {
+                css_classes = { "title-1" }
+            };
+            Gtk.Label sub_title = new Gtk.Label("Use Password to View Journal.");
+
+            var change_pass = new Gtk.Button.with_label("change password");
+
+            this._unlock_button.set_child(
+                                          new Gtk.Label("Unlock") {
+                css_classes = { "accent" }
+            });
+            this._unlock_button.set_css_classes({ "pill", "flat" });
+            this._unlock_button.set_halign(Gtk.Align.CENTER);
+            this._unlock_button.clicked.connect(() => _dialog_verify_password.begin());
+            change_pass.clicked.connect(() => _dialog_create_password.begin());
+
+            this._container.set_hexpand(true);
+            this._container.set_vexpand(true);
+            this._container.set_valign(Gtk.Align.CENTER);
+            this._container.set_halign(Gtk.Align.CENTER);
+
+            this._container.append(_lock_icon());
+            this._container.append(title);
+            this._container.append(sub_title);
+            this._container.append(this._unlock_button);
+            this._container.append(change_pass);
         }
 
         private async void _dialog_verify_password() {
@@ -108,35 +132,6 @@ namespace Journaling {
             }
         }
 
-        private void _build_ui() {
-            Gtk.Label title = new Gtk.Label("Journal is Locked") {
-                css_classes = { "title-1" }
-            };
-            Gtk.Label sub_title = new Gtk.Label("Use Password to View Journal.");
-
-            var change_pass = new Gtk.Button.with_label("change password");
-
-            this._unlock_button.set_child(
-                                          new Gtk.Label("Unlock") {
-                css_classes = { "accent" }
-            });
-            this._unlock_button.set_css_classes({ "pill", "flat" });
-            this._unlock_button.set_halign(Gtk.Align.CENTER);
-            this._unlock_button.clicked.connect(() => _dialog_verify_password.begin());
-            change_pass.clicked.connect(() => _dialog_create_password.begin());
-
-            this._container.set_hexpand(true);
-            this._container.set_vexpand(true);
-            this._container.set_valign(Gtk.Align.CENTER);
-            this._container.set_halign(Gtk.Align.CENTER);
-
-            this._container.append(_lock_icon());
-            this._container.append(title);
-            this._container.append(sub_title);
-            this._container.append(this._unlock_button);
-            this._container.append(change_pass);
-        }
-
         private Gtk.Box _lock_icon() {
             Gtk.Box lock_icon_box = new Gtk.Box(Gtk.Orientation.VERTICAL, 10) {
                 css_classes = { "lock-icon" },
@@ -153,3 +148,4 @@ namespace Journaling {
         }
     }
 }
+

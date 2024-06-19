@@ -33,10 +33,7 @@ namespace Journaling.Pages {
                     .css_classes ({"title-1"}),
                 new Vui.Button.from_icon_name ("go-next-symbolic")
                     .css_classes ({"flat", "circular"})
-                    .do(() => counter.state--),
-                new Vui.Spacer (),
-                new Vui.Label (() => counter.state.to_string (), counter)
-                    .css_classes ({"title-1"})
+                    .do(() => counter.state--)
             )
             .spacing(10)
         )

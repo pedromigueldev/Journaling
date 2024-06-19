@@ -20,6 +20,20 @@
 
 namespace Journaling {
     public class PasswordManager : GLib.Object {
+        private static PasswordManager instance;
+
+        public static PasswordManager get_instance() {
+            if (instance == null) {
+                instance = new PasswordManager();
+            }
+            return instance;
+        }
+        private PasswordManager() {
+            attributes["number"] = "8";
+            attributes["string"] = "eight";
+            attributes["even"] = "true";
+        }
+
         public bool has_tried = false;
         private Secret.Schema password_schema = new Secret.Schema (
              "com.github.pedromiguel_dev.journaling",
@@ -30,11 +44,6 @@ namespace Journaling {
         );
         private GLib.HashTable<string,string> attributes = new GLib.HashTable<string,string> (null, null);
 
-        public PasswordManager() {
-            attributes["number"] = "8";
-            attributes["string"] = "eight";
-            attributes["even"] = "true";
-        }
 
         public async string? lookup_password(string pass) throws Error {
             string? password = yield Secret.password_lookupv (password_schema, attributes, null);

@@ -1,8 +1,8 @@
 journaling_ui_sources = [
+  'utils' / 'test.vala',
   'utils' / 'PageWrapper.vala',
   'utils' / 'PasswordManager.vala',
   'utils' / 'MessageDialog.vala',
-  'utils' / 'test.vala',
   'window.vala',
   'MainNavigation.vala',
   'pages' / 'Home.vala',
@@ -19,7 +19,7 @@ journaling_sources = [
 journaling_deps = [
   dependency('libsecret-1'),
   dependency('gtk4'),
-  dependency('libadwaita-1', version: '>= 1.4'),
+  dependency('libadwaita-1', version: '>= 1.5'),
 ]
 
 journaling_sources += gnome.compile_resources(

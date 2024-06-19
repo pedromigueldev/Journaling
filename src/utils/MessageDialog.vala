@@ -1,17 +1,10 @@
 namespace Journaling {
-    public class MessageDialog : Adw.MessageDialog {
+    public class MessageDialog : Adw.AlertDialog {
 
-        public Gtk.Window win {get; construct;}
         Gtk.Box dialog_box = new Gtk.Box(Gtk.Orientation.VERTICAL, 15);
         public Gtk.Entry entry = new Gtk.Entry() { placeholder_text = "Type your password" };
 
         public MessageDialog(Gtk.Window win, string entry_text, Gtk.Box custom_icon) {
-            Object (
-                transient_for: win,
-                heading: "",
-                body: ""
-            );
-
             entry.set_visibility(false);
 
             dialog_box.append(custom_icon);
@@ -36,3 +29,4 @@ namespace Journaling {
 
     }
 }
+

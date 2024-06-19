@@ -18,19 +18,25 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-using Vui;
-
 namespace Journaling.Pages {
+    using Vui;
 
     public Vui.Page Home () {
         return new Vui.Page ("Home")
             .child(
-                new VBox(_title_box_mount(), _overlay_mount())
-                    .spacing(10)
-                    .expand(true, true)
-                    .valign(Gtk.Align.FILL)
-                    .halign(Gtk.Align.FILL)
-                    .margins(0, 20, 0, 20)
+                new ToolBar(
+                    new HeaderBar()
+                        .show_back_button(false)
+                        .show_title(false),
+                    new VBox(
+                        _title_box_mount(),
+                        _overlay_mount())
+                        .spacing(10)
+                        .expand(true, true)
+                        .valign(Gtk.Align.FILL)
+                        .halign(Gtk.Align.FILL)
+                        .margins(0, 20, 0, 20))
+
             );
     }
 
@@ -83,13 +89,14 @@ namespace Journaling.Pages {
         string date_string = current_date.format("%Y-%m-%d %H:%M:%S");
 
         var entry_card =
-            new Vui.VBox (
+            new VBox (
                 new Picture.for_resource("/com/github/pedromiguel_dev/journaling/img2").height_request(190),
                 new VBox (
                     new Label (() => "Title")
                         .css_classes({"title-1"})
                         .halign(Gtk.Align.START),
                     new Label (() => text)
+                        .expand(true, false)
                         .ellipsize(Pango.EllipsizeMode.END)
                         .halign(Gtk.Align.START)
                         .wrap(true)
@@ -116,7 +123,7 @@ namespace Journaling.Pages {
             .spacing(0)
             .margins(5,5,5,5);
 
-        return new Vui.Bin(entry_card)
+        return new Bin(entry_card)
             .css_classes({"card", "activatable"})
             .overflow(Gtk.Overflow.HIDDEN);
     }

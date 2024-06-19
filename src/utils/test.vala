@@ -1,8 +1,7 @@
 namespace Vui {
 
     [GenericAccessors]
-    public interface CommonWidgetModifiers<T, G> {
-        public abstract G widget {get; set;}
+    public interface Widget<T, G>{
         public virtual T spacing (int spacing){return this;}
         public virtual T expand (bool hexpand, bool vexpand){return this;}
         public virtual T valign (Gtk.Align align){return this;}
@@ -12,169 +11,50 @@ namespace Vui {
         public virtual T height_request (int height) {return this;}
     }
 
-    public class Navigation : CommonWidgetModifiers<Navigation, Adw.NavigationView> {
-        private Adw.NavigationView _widget;
+    public abstract class WidgetGeneric<T, G> : Widget<T, Gtk.Widget>, GLib.Object  {
+        public static SimpleActionGroup simple_action_group = new SimpleActionGroup();
 
-        public Adw.NavigationView widget {
+        private G _widget;
+
+        private Gtk.Widget internal_widget {
+            get { return (Gtk.Widget) _widget; }
+        }
+
+        public G widget {
             get { return _widget; }
             set { _widget = value; }
         }
 
-        private Navigation spacing (int spacing) {
+        public T expand (bool hexpand, bool vexpand) {
+            internal_widget.set_hexpand (hexpand);
+            internal_widget.set_vexpand (vexpand);
+            return this;
+        }
+        public T valign (Gtk.Align align) {
+            internal_widget.set_valign (align);
+            return this;
+        }
+        public T halign (Gtk.Align align){
+            internal_widget.set_halign (align);
             return this;
         }
 
-        public Navigation expand (bool hexpand, bool vexpand) {
-            widget.set_hexpand (hexpand);
-            widget.set_vexpand (vexpand);
-            return this;
-        }
-        public Navigation valign (Gtk.Align align) {
-            widget.set_valign (align);
-            return this;
-        }
-        public Navigation halign (Gtk.Align align){
-            widget.set_halign (align);
+        public T margins (int top, int left, int bottom, int right) {
+            internal_widget.margin_top = top;
+            internal_widget.margin_end = left;
+            internal_widget.margin_bottom = bottom;
+            internal_widget.margin_start = right;
             return this;
         }
 
-        public Navigation margins (int top, int left, int bottom, int right) {
-            widget.margin_top = top;
-            widget.margin_end = left;
-            widget.margin_bottom = bottom;
-            widget.margin_start = right;
+        public T css_classes (string[] css_classes) {
+            internal_widget.set_css_classes (css_classes);
             return this;
-        }
-
-        public Navigation css_classes (string[] css_classes) {
-            widget.set_css_classes (css_classes);
-            return this;
-        }
-
-
-        public Navigation (params Vui.Page[] c) {
-            widget = new Adw.NavigationView ();
-            foreach (var item in c)
-                widget.add (item.widget);
         }
     }
-
-    public class Window : CommonWidgetModifiers<Window, Adw.ApplicationWindow> {
-        private Adw.ApplicationWindow _widget;
-
-        public Adw.ApplicationWindow widget {
-            get { return _widget; }
-            set { _widget = value; }
-        }
-
-        private Window spacing (int spacing) {
-            return this;
-        }
-
-        public Window expand (bool hexpand, bool vexpand) {
-            widget.set_hexpand (hexpand);
-            widget.set_vexpand (vexpand);
-            return this;
-        }
-        public Window valign (Gtk.Align align) {
-            widget.set_valign (align);
-            return this;
-        }
-        public Window halign (Gtk.Align align){
-            widget.set_halign (align);
-            return this;
-        }
-
-        public Window margins (int top, int left, int bottom, int right) {
-            widget.margin_top = top;
-            widget.margin_end = left;
-            widget.margin_bottom = bottom;
-            widget.margin_start = right;
-            return this;
-        }
-
-        public Window css_classes (string[] css_classes) {
-            widget.set_css_classes (css_classes);
-            return this;
-        }
-
-        public Window child (CommonWidgetModifiers<CommonWidgetModifiers, Gtk.Widget> c) {
-            widget.set_content (c.widget);
-            return this;
-        }
-
-        protected delegate void bind_handle (Adw.ApplicationWindow window);
-        public Window bind (bind_handle handle){
-            handle(this.widget);
-            return this;
-        }
-
-        public Window handle () {
-            var handle = new Gtk.WindowHandle ();
-            handle.child = this.widget.child;
-            widget.set_child (handle);
-            return this;
-        }
-
-        public Window (Gtk.Application app) {
-            widget = new Adw.ApplicationWindow (app);
-            widget.icon_name = app.application_id;
-        }
-    }
-
-
-    public class Page : CommonWidgetModifiers<Page, Adw.NavigationPage> {
-        private Adw.NavigationPage _widget;
-
-        public Adw.NavigationPage widget {
-            get { return _widget; }
-            set { _widget = value; }
-        }
-
-        private Page spacing (int spacing) {
-            return this;
-        }
-
-        public Page expand (bool hexpand, bool vexpand) {
-            widget.set_hexpand (hexpand);
-            widget.set_vexpand (vexpand);
-            return this;
-        }
-        public Page valign (Gtk.Align align) {
-            widget.set_valign (align);
-            return this;
-        }
-        public Page halign (Gtk.Align align){
-            widget.set_halign (align);
-            return this;
-        }
-
-        public Page margins (int top, int left, int bottom, int right) {
-            widget.margin_top = top;
-            widget.margin_end = left;
-            widget.margin_bottom = bottom;
-            widget.margin_start = right;
-            return this;
-        }
-
-        public Page css_classes (string[] css_classes) {
-            widget.set_css_classes (css_classes);
-            return this;
-        }
-
-        public Page child ( CommonWidgetModifiers<CommonWidgetModifiers, Gtk.Widget> c) {
-            widget.set_child (c.widget);
-            return this;
-        }
-
-        public Page (string title) {
-            widget = new Adw.NavigationPage (new Gtk.Box (Gtk.Orientation.VERTICAL, 0), title);
-            widget.set_tag (title.ascii_down());
-        }
-    }
-
 
     public class Store<T> : GLib.Object {
+
         private T _state;
 
         public T state {
@@ -192,44 +72,106 @@ namespace Vui {
         }
     }
 
-    public class Label : CommonWidgetModifiers<Label, Gtk.Label> {
-        private Gtk.Label _widget;
+    public class AppWindow : WidgetGeneric<AppWindow, Adw.ApplicationWindow> {
 
-        public Gtk.Label widget {
-            get { return _widget; }
-            set { _widget = value; }
-        }
-
-        private Label spacing (int spacing) {
+        public AppWindow child (WidgetGeneric<WidgetGeneric, Gtk.Widget> c) {
+           widget.set_content (c.widget);
             return this;
         }
 
-        public Label expand (bool hexpand, bool vexpand) {
-            widget.set_hexpand (hexpand);
-            widget.set_vexpand (vexpand);
-            return this;
-        }
-        public Label valign (Gtk.Align align) {
-            widget.set_valign (align);
-            return this;
-        }
-        public Label halign (Gtk.Align align){
-            widget.set_halign (align);
+        protected delegate void Bind_handler (Adw.ApplicationWindow window);
+        public AppWindow bind (Bind_handler handle){
+            handle(this.widget);
             return this;
         }
 
-        public Label margins (int top, int left, int bottom, int right) {
-            widget.margin_top = top;
-            widget.margin_end = left;
-            widget.margin_bottom = bottom;
-            widget.margin_start = right;
+        public AppWindow handle () {
+            var handle = new Gtk.WindowHandle ();
+            handle.child = this.widget.child;
+            widget.set_child (handle);
             return this;
         }
 
-        public Label css_classes (string[] css_classes) {
-            widget.set_css_classes (css_classes);
+        public AppWindow (Gtk.Application app) {
+            widget = new Adw.ApplicationWindow (app);
+            widget.icon_name = app.application_id;
+        }
+    }
+
+    public class Navigation : WidgetGeneric<Navigation, Adw.NavigationView> {
+        ActionEntry[] action_entries = {
+                { "pop", pop },
+        };
+
+        protected delegate void Action (Adw.NavigationView nav);
+
+        public Navigation bind (Action handle){
+            handle(widget);
             return this;
         }
+
+        private void pop () {
+            this.widget.pop();
+        }
+
+        public Navigation action (string action_name, Action handle) {
+            var new_action = new SimpleAction(action_name, null);
+            new_action.activate.connect(() => handle(this.widget));
+
+            simple_action_group.add_action(new_action);
+            return this;
+        }
+
+        public Navigation (params Vui.Page[] c) {
+            widget = new Adw.NavigationView ();
+            foreach (var item in c)
+               widget.add (item.widget);
+
+            simple_action_group.add_action_entries (action_entries, this.widget);
+            this.widget.insert_action_group ("nav", simple_action_group);
+        }
+    }
+
+    public class Page : WidgetGeneric<Page, Adw.NavigationPage> {
+
+        public Page child (WidgetGeneric<WidgetGeneric, Gtk.Widget> c) {
+           widget.set_child (c.widget);
+            return this;
+        }
+
+        public Page (string title) {
+            widget = new Adw.NavigationPage (new Gtk.Box (Gtk.Orientation.VERTICAL, 0), title);
+           widget.set_tag (title.ascii_down());
+        }
+    }
+
+    public class ToolBar : WidgetGeneric<ToolBar, Adw.ToolbarView> {
+
+        public ToolBar (WidgetGeneric<WidgetGeneric, Gtk.Widget> top, WidgetGeneric<WidgetGeneric, Gtk.Widget> content,  WidgetGeneric<WidgetGeneric, Gtk.Widget>? bottom_bar = null ) {
+            widget = new Adw.ToolbarView ();
+            widget.add_top_bar (top.widget);
+            widget.set_content (content.widget);
+            widget.add_bottom_bar (bottom_bar == null ? new Gtk.Box (Gtk.Orientation.VERTICAL,0) : bottom_bar.widget);
+        }
+    }
+
+    public class HeaderBar : WidgetGeneric<HeaderBar, Adw.HeaderBar> {
+        public HeaderBar show_back_button (bool show_back_button) {
+            widget.show_back_button = show_back_button;
+            return this;
+        }
+
+        public HeaderBar show_title (bool show_title) {
+            widget.show_title = show_title;
+            return this;
+        }
+
+        public HeaderBar () {
+            widget = new Adw.HeaderBar ();
+        }
+    }
+
+    public class Label : WidgetGeneric<Label, Gtk.Label> {
 
         public Label wrap (bool wrap) {
             widget.set_wrap (wrap);
@@ -247,63 +189,24 @@ namespace Vui {
         protected delegate string String ();
 
         public Label (String? label = null, Store? state = null) {
+            widget = new Gtk.Label (label());
             if(state != null)
                 state.state_set.connect (() => {
-                    widget.label = label();
+                   widget.label = label();
                 });
-            widget = new Gtk.Label (label());
-
         }
 
     }
 
+    public class Picture : WidgetGeneric<Picture, Gtk.Picture> {
 
-    public class Picture : CommonWidgetModifiers<Picture, Gtk.Picture> {
-        private Gtk.Picture _widget;
-
-        public Gtk.Picture widget {
-            get { return _widget; }
-            set { _widget = value; }
-        }
-
-        private Picture spacing (int spacing) {
-            return this;
-        }
-
-        public Picture expand (bool hexpand, bool vexpand) {
-            widget.set_hexpand (hexpand);
-            widget.set_vexpand (vexpand);
-            return this;
-        }
-        public Picture valign (Gtk.Align align) {
-            widget.set_valign (align);
-            return this;
-        }
-        public Picture halign (Gtk.Align align){
-            widget.set_halign (align);
-            return this;
-        }
-
-        public Picture margins (int top, int left, int bottom, int right) {
-            widget.margin_top = top;
-            widget.margin_end = left;
-            widget.margin_bottom = bottom;
-            widget.margin_start = right;
-            return this;
-        }
-
-        public Picture css_classes (string[] css_classes) {
-            widget.set_css_classes (css_classes);
-            return this;
-        }
-
-        public override Picture height_request (int height) {
+        public Picture height_request (int height) {
             widget.height_request = height;
             return this;
         }
 
         public Picture () {
-           widget = new Gtk.Picture();
+          widget = new Gtk.Picture();
         }
         public Picture.for_paintable (Gdk.Paintable? paintable) {
            widget = new Gtk.Picture.for_paintable (paintable);
@@ -320,49 +223,19 @@ namespace Vui {
 
     }
 
-    public class Button : CommonWidgetModifiers<Button, Gtk.Button> {
-        private Gtk.Button _widget;
-
-        public Gtk.Button widget {
-            get { return _widget; }
-            set { _widget = value; }
-        }
-
-        public Button expand (bool hexpand, bool vexpand) {
-            widget.set_hexpand (hexpand);
-            widget.set_vexpand (vexpand);
-            return this;
-        }
-        public Button valign (Gtk.Align align) {
-            widget.set_valign (align);
-            return this;
-        }
-        public Button halign (Gtk.Align align){
-            widget.set_halign (align);
-            return this;
-        }
-
-        public Button margins (int top, int left, int bottom, int right) {
-            widget.margin_top = top;
-            widget.margin_end = left;
-            widget.margin_bottom = bottom;
-            widget.margin_start = right;
-            return this;
-        }
-
-        public Button css_classes (string[] css_classes) {
-            widget.set_css_classes (css_classes);
-            return this;
-        }
-
+    public class Button : WidgetGeneric<Button, Gtk.Button> {
         protected delegate void action<T> ();
 
         public Button do(owned action actions){
             widget.clicked.connect (() => actions());
             return this;
         }
-        public Button (action actions) {
-            widget = new Gtk.Button ();
+
+        construct {
+            widget = new Gtk.Button();
+        }
+        public Button (WidgetGeneric<WidgetGeneric, Gtk.Widget>? child = null) {
+            widget.set_child (child.widget);
         }
         public Button.from_icon_name (string icon_name) {
             widget = new Gtk.Button.from_icon_name(icon_name);
@@ -372,58 +245,14 @@ namespace Vui {
         }
     }
 
-    public interface CommonWidgetModifiersP<G> {
-        public abstract G widget {get; protected set;}
-        public abstract int spacing {protected set;}
-        public abstract bool[] expand { protected set;}
-        public abstract Gtk.Align valign {protected set;}
-        public abstract Gtk.Align halign {protected set;}
-        public abstract int[] margins {protected set;}
-        public abstract string[] css_classes {protected set;}
-    }
-
-    public class HBox : CommonWidgetModifiers<HBox, Gtk.Box> {
-        private Gtk.Box _widget;
-
-        public Gtk.Box widget {
-            get { return _widget; }
-            set { _widget = value; }
-        }
-
+    public class HBox : WidgetGeneric<HBox, Gtk.Box> {
         public HBox spacing (int spacing) {
             widget.set_spacing (spacing);
             return this;
         }
 
-        public HBox expand (bool hexpand, bool vexpand) {
-            widget.set_hexpand (hexpand);
-            widget.set_vexpand (vexpand);
-            return this;
-        }
-        public HBox valign (Gtk.Align align) {
-            widget.set_valign (align);
-            return this;
-        }
-        public HBox halign (Gtk.Align align){
-            widget.set_halign (align);
-            return this;
-        }
-
-        public HBox margins (int top, int left, int bottom, int right) {
-            widget.margin_top = top;
-            widget.margin_end = left;
-            widget.margin_bottom = bottom;
-            widget.margin_start = right;
-            return this;
-        }
-
-        public HBox css_classes (string[] css_classes) {
-            widget.set_css_classes (css_classes);
-            return this;
-        }
-
-        public HBox (params CommonWidgetModifiers<CommonWidgetModifiers, Gtk.Widget>[]? children) {
-            _widget = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
+        public HBox (params WidgetGeneric<WidgetGeneric, Gtk.Widget>[]? children) {
+            widget = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
             if(children != null) {
                 foreach (var item in children)
                     widget.append (item.widget);
@@ -431,200 +260,53 @@ namespace Vui {
         }
     }
 
-
-    public class VBox : CommonWidgetModifiers<VBox, Gtk.Box> {
-        private Gtk.Box _widget;
-
-        public Gtk.Box widget {
-            get { return _widget; }
-            set { _widget = value; }
-        }
-
+    public class VBox : WidgetGeneric<VBox, Gtk.Box> {
         public VBox spacing (int spacing) {
             widget.set_spacing (spacing);
             return this;
         }
-        public VBox expand (bool hexpand, bool vexpand) {
-            widget.set_hexpand (hexpand);
-            widget.set_vexpand (vexpand);
-            return this;
-        }
-        public VBox valign (Gtk.Align align) {
-            widget.set_valign (align);
-            return this;
-        }
-        public VBox halign (Gtk.Align align){
-            widget.set_halign (align);
-            return this;
-        }
-        public VBox margins (int top, int left, int bottom, int right) {
-            widget.margin_top = top;
-            widget.margin_end = left;
-            widget.margin_bottom = bottom;
-            widget.margin_start = right;
-            return this;
-        }
-        public VBox css_classes (string[] css_classes) {
-            widget.set_css_classes (css_classes);
-            return this;
-        }
 
-        public VBox (params CommonWidgetModifiers<CommonWidgetModifiers, Gtk.Widget>[]? children) {
-            _widget = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
+        public VBox (params WidgetGeneric<WidgetGeneric, Gtk.Widget>[]? children) {
+            widget = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
             if(children != null) {
                 foreach (var item in children)
                     widget.append (item.widget);
             }
         }
     }
-    public class Separator : CommonWidgetModifiers<Separator, Gtk.Separator> {
-        private Gtk.Separator _widget;
 
-        public Gtk.Separator widget {
-            get { return _widget; }
-            set { _widget = value; }
-        }
-
-        public Separator css_classes (string[] css_classes) {
-            widget.set_css_classes (css_classes);
-            return this;
-        }
-
+    public class Separator : WidgetGeneric<Separator, Gtk.Separator> {
         public Separator(Gtk.Orientation orientation) {
             widget = new Gtk.Separator (orientation);
         }
     }
-    public class Spacer : CommonWidgetModifiers<Spacer, Gtk.Separator> {
-         private Gtk.Separator _widget;
 
-        public Gtk.Separator widget {
-            get { return _widget; }
-            set { _widget = value; }
-        }
-
-        private Spacer spacing (int spacing) {
-            return this;
-        }
-        public Spacer expand (bool hexpand, bool vexpand) {
-            widget.set_hexpand (hexpand);
-            widget.set_vexpand (vexpand);
-            return this;
-        }
-        public Spacer valign (Gtk.Align align) {
-            widget.set_valign (align);
-            return this;
-        }
-        public Spacer halign (Gtk.Align align){
-            widget.set_halign (align);
-            return this;
-        }
-        public Spacer margins (int top, int left, int bottom, int right) {
-            widget.margin_top = top;
-            widget.margin_end = left;
-            widget.margin_bottom = bottom;
-            widget.margin_start = right;
-            return this;
-        }
-        public Spacer css_classes (string[] css_classes) {
-            widget.set_css_classes (css_classes);
-            return this;
-        }
-
+    public class Spacer : WidgetGeneric<Spacer, Gtk.Separator> {
         public Spacer () {
-            _widget = new Gtk.Separator (Gtk.Orientation.VERTICAL) { css_classes = {"spacer"} };
+            widget = new Gtk.Separator (Gtk.Orientation.VERTICAL) { css_classes = {"spacer"} };
         }
     }
 
-    public class MenuButton : CommonWidgetModifiers<MenuButton, Gtk.MenuButton> {
-         private Gtk.MenuButton _widget;
-
-        public Gtk.MenuButton widget {
-            get { return _widget; }
-            set { _widget = value; }
-        }
-
-        private MenuButton spacing (int spacing) {
-            return this;
-        }
-        public MenuButton expand (bool hexpand, bool vexpand) {
-            widget.set_hexpand (hexpand);
-            widget.set_vexpand (vexpand);
-            return this;
-        }
-        public MenuButton valign (Gtk.Align align) {
-            widget.set_valign (align);
-            return this;
-        }
-        public MenuButton halign (Gtk.Align align){
-            widget.set_halign (align);
-            return this;
-        }
-        public MenuButton margins (int top, int left, int bottom, int right) {
-            widget.margin_top = top;
-            widget.margin_end = left;
-            widget.margin_bottom = bottom;
-            widget.margin_start = right;
-            return this;
-        }
-        public MenuButton css_classes (string[] css_classes) {
-            widget.set_css_classes (css_classes);
-            return this;
-        }
+    public class MenuButton : WidgetGeneric<MenuButton, Gtk.MenuButton> {
 
         public MenuButton icon_name (string name){
             widget.set_icon_name (name);
             return this;
         }
 
-        public MenuButton (CommonWidgetModifiers<CommonWidgetModifiers, Gtk.Widget> p) {
-            var popover = new Gtk.Popover () { child = p.widget };
-            _widget = new Gtk.MenuButton () { popover = popover};
+        public MenuButton (WidgetGeneric<WidgetGeneric, Gtk.Widget> popover) {
+            var ppvr = new Gtk.Popover () { child = popover.widget };
+            widget = new Gtk.MenuButton () { popover = ppvr};
         }
     }
 
-    public class Overlay : CommonWidgetModifiers<Overlay, Gtk.Overlay> {
-        private Gtk.Overlay _widget;
-
-        public Gtk.Overlay widget {
-            get { return _widget; }
-            set { _widget = value; }
-        }
-
-        private Overlay spacing (int spacing) {
-            return this;
-        }
-
-        public Overlay expand (bool hexpand, bool vexpand) {
-            widget.set_hexpand (hexpand);
-            widget.set_vexpand (vexpand);
-            return this;
-        }
-        public Overlay valign (Gtk.Align align) {
-            widget.set_valign (align);
-            return this;
-        }
-        public Overlay halign (Gtk.Align align){
-            widget.set_halign (align);
-            return this;
-        }
-        public Overlay margins (int top, int left, int bottom, int right) {
-            widget.margin_top = top;
-            widget.margin_end = left;
-            widget.margin_bottom = bottom;
-            widget.margin_start = right;
-            return this;
-        }
-        public Overlay css_classes (string[] css_classes) {
-            widget.set_css_classes (css_classes);
-            return this;
-        }
-
-        public Overlay set_overlay (CommonWidgetModifiers<CommonWidgetModifiers, Gtk.Widget> overlay) {
+    public class Overlay : WidgetGeneric<Overlay, Gtk.Overlay> {
+        public Overlay set_overlay (WidgetGeneric<WidgetGeneric, Gtk.Widget> overlay) {
             widget.add_overlay (overlay.widget);
             return this;
         }
 
-        public Overlay set_child (CommonWidgetModifiers<CommonWidgetModifiers, Gtk.Widget> child) {
+        public Overlay set_child (WidgetGeneric<WidgetGeneric, Gtk.Widget> child) {
             widget.child = child.widget;
             return this;
         }
@@ -634,44 +316,7 @@ namespace Vui {
         }
     }
 
-    public class ScrolledBox : CommonWidgetModifiers<ScrolledBox, Gtk.ScrolledWindow >  {
-        private Gtk.ScrolledWindow _widget;
-
-        public Gtk.ScrolledWindow  widget {
-            get { return _widget; }
-            set { _widget = value; }
-        }
-
-        private ScrolledBox spacing (int spacing) {
-            // widget.set_spacing (spacing);
-            return this;
-        }
-        public ScrolledBox expand (bool hexpand, bool vexpand) {
-            widget.set_hexpand (hexpand);
-            widget.set_vexpand (vexpand);
-            return this;
-        }
-        public ScrolledBox valign (Gtk.Align align) {
-            widget.set_valign (align);
-            return this;
-        }
-        public ScrolledBox halign (Gtk.Align align){
-            widget.set_halign (align);
-            return this;
-        }
-        public ScrolledBox margins (int top, int left, int bottom, int right) {
-            widget.margin_top = top;
-            widget.margin_end = left;
-            widget.margin_bottom = bottom;
-            widget.margin_start = right;
-            return this;
-        }
-        public ScrolledBox css_classes (string[] css_classes) {
-            widget.set_css_classes (css_classes);
-            return this;
-        }
-
-        // scrolled specific
+    public class ScrolledBox : WidgetGeneric<ScrolledBox, Gtk.ScrolledWindow >  {
 
         public ScrolledBox vscrollbar_policy (Gtk.PolicyType vscrollbar_policy ) {
             widget.vscrollbar_policy = vscrollbar_policy;
@@ -683,55 +328,20 @@ namespace Vui {
             return this;
         }
 
-        public ScrolledBox (CommonWidgetModifiers<CommonWidgetModifiers, Gtk.Widget> child) {
+        public ScrolledBox (WidgetGeneric<WidgetGeneric, Gtk.Widget> child) {
             widget = new Gtk.ScrolledWindow ();
             widget.set_child (child.widget);
         }
     }
 
-    public class Bin : CommonWidgetModifiers<Bin, Adw.Bin> {
-        private Adw.Bin _widget;
-
-        public Adw.Bin widget {
-            get { return _widget; }
-            set { _widget = value; }
-        }
-
-        private Bin spacing (int spacing) {
-            // widget.set_spacing (spacing);
-            return this;
-        }
-        public Bin expand (bool hexpand, bool vexpand) {
-            widget.set_hexpand (hexpand);
-            widget.set_vexpand (vexpand);
-            return this;
-        }
-        public Bin valign (Gtk.Align align) {
-            widget.set_valign (align);
-            return this;
-        }
-        public Bin halign (Gtk.Align align){
-            widget.set_halign (align);
-            return this;
-        }
-        public Bin margins (int top, int left, int bottom, int right) {
-            widget.margin_top = top;
-            widget.margin_end = left;
-            widget.margin_bottom = bottom;
-            widget.margin_start = right;
-            return this;
-        }
-        public Bin css_classes (string[] css_classes) {
-            widget.set_css_classes (css_classes);
-            return this;
-        }
+    public class Bin : WidgetGeneric<Bin, Adw.Bin> {
 
         public Bin overflow (Gtk.Overflow overflow) {
             widget.set_overflow (overflow);
             return this;
         }
 
-        public Bin (CommonWidgetModifiers<CommonWidgetModifiers, Gtk.Widget> child) {
+        public Bin (WidgetGeneric<WidgetGeneric, Gtk.Widget> child) {
             widget = new Adw.Bin();
             widget.set_child(child.widget);
         }

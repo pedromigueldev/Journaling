@@ -17,11 +17,108 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-namespace Journaling {
+namespace Journaling.Pages {
+
+    public Vui.Page Lock () {
+
+        return new Vui.Page("Locked")
+            .child(
+                new Vui.VBox(
+                    new Vui.Label(() => "Journal is Locked")
+                        .css_classes({"title-1"}),
+                    new Vui.Label(() => "Use Password to View Journal."),
+                    new Vui.Button(
+                        new Vui.Label(() => "Unlock")
+                            .css_classes({"accent"})
+                    )
+                    .do(() => _dialog_verify_password.begin())
+                    .css_classes({ "pill", "flat" })
+                )
+                .spacing(20)
+                .expand(true, true)
+                .valign(Gtk.Align.CENTER)
+                .halign(Gtk.Align.CENTER)
+            )
+        ;
+    }
+
+    private Gtk.Box _lock_icon() {
+        Gtk.Box lock_icon_box = new Gtk.Box(Gtk.Orientation.VERTICAL, 10) {
+            css_classes = { "lock-icon" },
+            halign = Gtk.Align.CENTER
+        };
+
+        lock_icon_box.append(
+             new Gtk.Image.from_icon_name("system-lock-screen-symbolic") {
+            pixel_size = 32,
+            css_classes = { "lock-icon-image-invert" },
+            halign = Gtk.Align.CENTER
+        });
+        return lock_icon_box;
+    }
+
+    private async void _dialog_verify_password() {
+
+        var box = new Gtk.Box(Gtk.Orientation.VERTICAL, 15);
+        var dialog = new Adw.AlertDialog( "", "");
+        var entry = new Gtk.Entry() { placeholder_text = "Type your password" };
+
+        entry.set_visibility(false);
+
+        box.append(
+            new Gtk.Label("Type your password for 'Journaling'") {
+                css_classes = { "title-2" }, wrap = true, justify = Gtk.Justification.CENTER
+            }
+        );
+
+        box.append(entry);
+        dialog.set_extra_child(box);
+
+        dialog.add_response("cancel", "Cancel");
+        dialog.add_response("verify", "Verify");
+
+        dialog.set_response_appearance("cancel", Adw.ResponseAppearance.DESTRUCTIVE);
+        dialog.set_response_appearance("verify", Adw.ResponseAppearance.SUGGESTED);
+
+        dialog.present(Journaling.Application.active_window_);
+        dialog.show();
+
+        // MessageDialog dialog = new Journaling.MessageDialog(Journaling.Application.Window, "Type your password for 'Journaling'", _lock_icon());
+        // string? password = null;
+
+        // try {
+        //     password = yield PasswordManager.get_instance().lookup_password(dialog.entry.text);
+        // } catch (GLib.Error e) {
+        //     print("message: %s\n", e.message);
+        // }
+
+        // if (password == null)
+        //     print("Null password.\n");
+
+        // dialog.response.connect((response) => {
+        //     if (response == "cancel") {
+        //         print("Canceled was selected.\n");
+        //         return;
+        //     }
+        //     print("password typed in is %s.\n", entry.text);
+        //     if (password != null)
+        //         print("password is: %s.\n", password);
+
+        //     if (entry.text == password) {
+        //         print("password matches.\n");
+        //         var action = Vui.WidgetGeneric.simple_action_group.lookup_action("nav.print");
+        //         if (action != null) {
+        //             action.activate(null);
+        //         } else {
+        //             print("Action %s not found\n", "navprint");
+        //         }
+        //     } else {
+        //         print("password doesn't match\n");
+        //     }
+        // });
+    }
 
     public class LockScreen : Page {
-
-        private PasswordManager password_manager = new PasswordManager();
         private Adw.ApplicationWindow Window;
         private MainNavigation Nav;
         private Gtk.Button _unlock_button = new Gtk.Button();
@@ -69,39 +166,37 @@ namespace Journaling {
             this._container.append(this._unlock_button);
             this._container.append(change_pass);
         }
-
         private async void _dialog_verify_password() {
-            MessageDialog dialog = new Journaling.MessageDialog(Window, "Type your password for 'Journaling'", _lock_icon());
-            string? password = null;
+            // MessageDialog dialog = new Journaling.MessageDialog(Journaling.Application.Window, "Type your password for 'Journaling'", _lock_icon());
+            // string? password = null;
 
-            try {
-                password = yield password_manager.lookup_password(dialog.entry.text);
-            } catch (GLib.Error e) {
-                print("message: %s\n", e.message);
-            }
+            // try {
+            //     password =  yield PasswordManager.get_instance().lookup_password(dialog.entry.text);
+            // } catch (GLib.Error e) {
+            //     print("message: %s\n", e.message);
+            // }
 
-            if (password == null)
-                print("Null password.\n");
+            // if (password == null)
+            //     print("Null password.\n");
 
-            dialog.response.connect((response) => {
-                if (response == "cancel") {
-                    print("Canceled was selected.\n");
-                    return;
-                }
-                print("password typed in is %s.\n", dialog.entry.text);
-                if (password != null)
-                    print("password is: %s.\n", password);
+            // dialog.response.connect((response) => {
+            //     if (response == "cancel") {
+            //         print("Canceled was selected.\n");
+            //         return;
+            //     }
+            //     print("password typed in is %s.\n", dialog.entry.text);
+            //     if (password != null)
+            //         print("password is: %s.\n", password);
 
-                if (dialog.entry.text == password) {
-                    print("password matches.\n");
-                    if (this.Nav.Views.pop())
-                        print("removed");
-                } else {
-                    print("password doesn't match\n");
-                }
-            });
+            //     if (dialog.entry.text == password) {
+            //         print("password matches.\n");
+            //         if (this.Nav.Views.pop())
+            //             print("removed");
+            //     } else {
+            //         print("password doesn't match\n");
+            //     }
+            // });
         }
-
         private async void _dialog_create_password() {
             MessageDialog dialog = new Journaling.MessageDialog(Window, "Type your password for 'Journaling'", _lock_icon());
 
@@ -119,7 +214,7 @@ namespace Journaling {
             bool? is_stored = null;
 
             try {
-                is_stored = yield password_manager.create_password(password);
+                is_stored =  yield PasswordManager.get_instance().create_password(password);
             } catch (GLib.Error e) {
                 print("message: %s\n", e.message);
             }
@@ -131,21 +226,5 @@ namespace Journaling {
                 print("Successfully stored password: %s\n", password);
             }
         }
-
-        private Gtk.Box _lock_icon() {
-            Gtk.Box lock_icon_box = new Gtk.Box(Gtk.Orientation.VERTICAL, 10) {
-                css_classes = { "lock-icon" },
-                halign = Gtk.Align.CENTER
-            };
-
-            lock_icon_box.append(
-                                 new Gtk.Image.from_icon_name("system-lock-screen-symbolic") {
-                pixel_size = 32,
-                css_classes = { "lock-icon-image-invert" },
-                halign = Gtk.Align.CENTER
-            });
-            return lock_icon_box;
-        }
-    }
-}
+}}
 

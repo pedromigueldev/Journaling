@@ -18,20 +18,25 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-namespace Journaling.Pages {
+namespace Journaling {
+    using Vui;
 
-    public Vui.Window Window (Journaling.Application app) {
-        var settings = app.settings;
+    public AppWindow Window (Journaling.Application app) {
+        var settings = new GLib.Settings (app.application_id);
 
-        return new Vui.Window(app)
+        return new AppWindow(app)
             .child (
-                new Vui.HBox (
-                    new Vui.Navigation (
+                new HBox (
+                    new Navigation (
+                        Journaling.Pages.Lock (),
                         Journaling.Pages.Home (),
                         Journaling.Pages.IncrementCount ()
                     )
-                ).expand(true, true)
-            ).bind((window) => {
+                    .action("print", () => print("Eita bbs\n"))
+                )
+                .expand(true, true)
+            )
+            .bind((window) => {
                 settings.bind ("width", window, "default-width", SettingsBindFlags.DEFAULT);
                 settings.bind ("height", window, "default-height", SettingsBindFlags.DEFAULT);
             });
@@ -39,14 +44,12 @@ namespace Journaling.Pages {
 
 }
 namespace Journaling {
-
-
-    public class Window : Adw.ApplicationWindow {
+    public class WindowOLD : Adw.ApplicationWindow {
         private MainNavigation _main_navigation;
 
-        public Window (Application app) {
+        public WindowOLD (Application app) {
             Object (application: app);
-            var settings = app.settings; 
+            var settings = new GLib.Settings (app.application_id);
 
             this.application = app;
             this.icon_name = app.application_id;
@@ -64,3 +67,4 @@ namespace Journaling {
         }
     }
 }
+

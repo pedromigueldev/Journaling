@@ -21,7 +21,7 @@ namespace Journaling {
     public class MainNavigation : Gtk.Box {
         private Adw.ApplicationWindow Window;
         public Adw.NavigationView Views = new Adw.NavigationView ();
-        public LockScreen lock;
+        public Journaling.Pages.LockScreen lock;
 
         public MainNavigation (GLib.Settings settings, Adw.ApplicationWindow Window) {
             this.Window = Window;
@@ -33,7 +33,7 @@ namespace Journaling {
         }
 
         private void _build_ui () {
-            this.lock = new LockScreen (this.Window, this);
+            this.lock = new Journaling.Pages.LockScreen (this.Window, this);
 
             Views.add (Journaling.Pages.Home ().widget);
             Views.add (Journaling.Pages.IncrementCount ().widget);
@@ -43,3 +43,4 @@ namespace Journaling {
         }
     }
 }
+

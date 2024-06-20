@@ -20,7 +20,6 @@
 namespace Journaling.Pages {
 
     public Vui.Page Lock () {
-
         return new Vui.Page("Locked")
             .child(
                 new Vui.VBox(
@@ -31,15 +30,34 @@ namespace Journaling.Pages {
                         new Vui.Label(() => "Unlock")
                             .css_classes({"accent"})
                     )
-                    .do(() => _dialog_verify_password.begin())
+                    .do(() =>
+                        new Vui.AlertDialog("Journal is locked", "")
+                            .add_action("Cancel", Adw.ResponseAppearance.DESTRUCTIVE)
+                            .add_action("Verify", Adw.ResponseAppearance.SUGGESTED)
+                            .child(
+                                new Vui.VBox(
+                                    new Vui.Entry("Type your password")
+                                )
+                                .expand(true, true)
+                            )
+                            .on_response((res) => {
+                                print("-----%s-----\n", res);
+
+                                var action = Vui.WidgetGeneric.simple_action_group.lookup_action("nav.pop");
+                                if (action != null) {
+                                    action.activate(null);
+                                } else {
+                                    print("Action %s not found\n", "navprint");
+                                }
+                            })
+                    )
                     .css_classes({ "pill", "flat" })
                 )
                 .spacing(20)
                 .expand(true, true)
                 .valign(Gtk.Align.CENTER)
                 .halign(Gtk.Align.CENTER)
-            )
-        ;
+            );
     }
 
     private Gtk.Box _lock_icon() {
@@ -60,16 +78,16 @@ namespace Journaling.Pages {
     private async void _dialog_verify_password() {
 
         var box = new Gtk.Box(Gtk.Orientation.VERTICAL, 15);
-        var dialog = new Adw.AlertDialog( "", "");
+        var dialog = new Adw.AlertDialog( "Journal is locked", "Type your password for 'Journaling'");
         var entry = new Gtk.Entry() { placeholder_text = "Type your password" };
 
         entry.set_visibility(false);
 
-        box.append(
-            new Gtk.Label("Type your password for 'Journaling'") {
-                css_classes = { "title-2" }, wrap = true, justify = Gtk.Justification.CENTER
-            }
-        );
+        // box.append(
+        //     new Gtk.Label("Type your password for 'Journaling'") {
+        //         css_classes = { "title-2" }, wrap = true, justify = Gtk.Justification.CENTER
+        //     }
+        // );
 
         box.append(entry);
         dialog.set_extra_child(box);

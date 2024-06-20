@@ -99,10 +99,6 @@ namespace Vui {
     }
 
     public class Navigation : WidgetGeneric<Navigation, Adw.NavigationView> {
-        ActionEntry[] action_entries = {
-                { "pop", pop },
-        };
-
         protected delegate void Action (Adw.NavigationView nav);
 
         public Navigation bind (Action handle){
@@ -110,12 +106,8 @@ namespace Vui {
             return this;
         }
 
-        private void pop () {
-            this.widget.pop();
-        }
-
-        public Navigation action (string action_name, Action handle) {
-            var new_action = new SimpleAction(action_name, null);
+        public Navigation add_action (string action_name, Action handle) {
+            var new_action = new SimpleAction("nav." + action_name, null);
             new_action.activate.connect(() => handle(this.widget));
 
             simple_action_group.add_action(new_action);
@@ -124,24 +116,26 @@ namespace Vui {
 
         public Navigation (params Vui.Page[] c) {
             widget = new Adw.NavigationView ();
-            foreach (var item in c)
-               widget.add (item.widget);
+            foreach (var item in c){
+                widget.add (item.widget);
+                this.widget.push (item.widget);
 
-            simple_action_group.add_action_entries (action_entries, this.widget);
-            this.widget.insert_action_group ("nav", simple_action_group);
+                print("page %s added\n", item.widget.tag);
+            }
+            this.add_action ("pop", (nav) => nav.pop ());
         }
     }
 
     public class Page : WidgetGeneric<Page, Adw.NavigationPage> {
 
         public Page child (WidgetGeneric<WidgetGeneric, Gtk.Widget> c) {
-           widget.set_child (c.widget);
+            widget.set_child (c.widget);
             return this;
         }
 
         public Page (string title) {
-            widget = new Adw.NavigationPage (new Gtk.Box (Gtk.Orientation.VERTICAL, 0), title);
-           widget.set_tag (title.ascii_down());
+           widget = new Adw.NavigationPage (new Gtk.Box (Gtk.Orientation.VERTICAL, 0), title);
+           widget.set_tag (title);
         }
     }
 
@@ -297,6 +291,42 @@ namespace Vui {
         public MenuButton (WidgetGeneric<WidgetGeneric, Gtk.Widget> popover) {
             var ppvr = new Gtk.Popover () { child = popover.widget };
             widget = new Gtk.MenuButton () { popover = ppvr};
+        }
+    }
+
+    public class AlertDialog : WidgetGeneric<AlertDialog, Adw.AlertDialog> {
+        protected delegate void Action (string response);
+
+        public AlertDialog on_response (owned Action action) {
+            this.widget.response.connect ((response) => action(response));
+            return this;
+        }
+
+        public AlertDialog add_action (string action, Adw.ResponseAppearance style) {
+
+            this.widget.add_response (action.ascii_down(), action);
+            this.widget.set_response_appearance (action.ascii_down(), style);
+
+            return this;
+        }
+
+        public AlertDialog child (WidgetGeneric<WidgetGeneric, Gtk.Widget> c) {
+            this.widget.set_extra_child (c.widget);
+            return this;
+        }
+
+        public AlertDialog (string title, string description) {
+            widget = new Adw.AlertDialog (title, description);
+            this.widget.present(Journaling.Application.active_window_);
+            this.widget.show();
+        }
+    }
+
+    public class Entry : WidgetGeneric<Entry, Gtk.Entry> {
+
+        public Entry(string placeholder) {
+            this.widget = new Gtk.Entry();
+            this.widget.set_placeholder_text (placeholder);
         }
     }
 

@@ -28,11 +28,11 @@ namespace Journaling {
             .child (
                 new HBox (
                     new Navigation (
-                        Journaling.Pages.Lock (),
+                        Journaling.Pages.IncrementCount (),
                         Journaling.Pages.Home (),
-                        Journaling.Pages.IncrementCount ()
+                        Journaling.Pages.Lock ()
                     )
-                    .action("print", () => print("Eita bbs\n"))
+                    .add_action("print", () => print("this is a action\n"))
                 )
                 .expand(true, true)
             )

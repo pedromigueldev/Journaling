@@ -71,7 +71,7 @@ namespace Journaling.Pages {
 
     private HBox _title_box_mount() {
         return new HBox(
-            new Label(() => "Journal")
+            new Label("Journal")
                 .css_classes({"title-1", "title-bigger"})
                 .halign(Gtk.Align.START)
                 .valign(Gtk.Align.CENTER),
@@ -92,10 +92,10 @@ namespace Journaling.Pages {
             new VBox (
                 new Picture.for_resource("/com/github/pedromiguel_dev/journaling/img2").height_request(190),
                 new VBox (
-                    new Label (() => "Title")
+                    new Label ("Title")
                         .css_classes({"title-1"})
                         .halign(Gtk.Align.START),
-                    new Label (() => text)
+                    new Label (text)
                         .expand(true, false)
                         .ellipsize(Pango.EllipsizeMode.END)
                         .halign(Gtk.Align.START)
@@ -105,7 +105,7 @@ namespace Journaling.Pages {
                 .margins( 10, 10, 10, 10 ),
                 new Separator (Gtk.Orientation.HORIZONTAL),
                 new HBox ( // status bar
-                    new Label(() => date_string),
+                    new Label(date_string),
                     new Spacer().expand(true, true),
                     new MenuButton (
                         new VBox (

@@ -1,7 +1,7 @@
 namespace Vui {
 
     [GenericAccessors]
-    public interface Widget<T, G>{
+    public interface Widget<T>{
         public virtual T spacing (int spacing){return this;}
         public virtual T expand (bool hexpand, bool vexpand){return this;}
         public virtual T valign (Gtk.Align align){return this;}
@@ -11,7 +11,9 @@ namespace Vui {
         public virtual T height_request (int height) {return this;}
     }
 
-    public abstract class WidgetGeneric<T, G> : Widget<T, Gtk.Widget>, GLib.Object  {
+    public interface AnyWidget : WidgetGeneric<WidgetGeneric, Gtk.Widget>{}
+
+    public abstract class WidgetGeneric<T, G> : Widget<T>, GLib.Object  {
         public static SimpleActionGroup simple_action_group = new SimpleActionGroup();
 
         private G _widget;
@@ -117,11 +119,11 @@ namespace Vui {
         public Navigation (params Vui.Page[] c) {
             widget = new Adw.NavigationView ();
             foreach (var item in c){
-                widget.add (item.widget);
                 this.widget.push (item.widget);
-
+                widget.add (item.widget);
                 print("page %s added\n", item.widget.tag);
             }
+
             this.add_action ("pop", (nav) => nav.pop ());
         }
     }
@@ -182,12 +184,16 @@ namespace Vui {
 
         protected delegate string String ();
 
-        public Label (String? label = null, Store? state = null) {
+        public Label.ref (String? label = null, Store? state = null) {
             widget = new Gtk.Label (label());
             if(state != null)
                 state.state_set.connect (() => {
                    widget.label = label();
                 });
+        }
+
+        public Label (string label) {
+            widget = new Gtk.Label (label);
         }
 
     }
@@ -218,7 +224,7 @@ namespace Vui {
     }
 
     public class Button : WidgetGeneric<Button, Gtk.Button> {
-        protected delegate void action<T> ();
+        protected delegate void action ();
 
         public Button do(owned action actions){
             widget.clicked.connect (() => actions());
@@ -297,8 +303,8 @@ namespace Vui {
     public class AlertDialog : WidgetGeneric<AlertDialog, Adw.AlertDialog> {
         protected delegate void Action (string response);
 
-        public AlertDialog on_response (owned Action action) {
-            this.widget.response.connect ((response) => action(response));
+        public AlertDialog on_response (Action action) {
+            this.widget.response.connect ((res) => action(res));
             return this;
         }
 
@@ -323,10 +329,15 @@ namespace Vui {
     }
 
     public class Entry : WidgetGeneric<Entry, Gtk.Entry> {
-
-        public Entry(string placeholder) {
+        public Entry(string placeholder, Store<string>? write_to = null) {
             this.widget = new Gtk.Entry();
             this.widget.set_placeholder_text (placeholder);
+
+            if(write_to != null)
+                this.widget.changed.connect (() => {
+                    print("typed: %s\n", this.widget.text);
+                   write_to.state = this.widget.text;
+                });
         }
     }
 
@@ -377,4 +388,5 @@ namespace Vui {
         }
     }
 }
+
 

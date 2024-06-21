@@ -45,7 +45,7 @@ namespace Journaling {
         private GLib.HashTable<string,string> attributes = new GLib.HashTable<string,string> (null, null);
 
 
-        public async string? lookup_password(string pass) throws Error {
+        public async string? lookup_password() throws Error {
             string? password = yield Secret.password_lookupv (password_schema, attributes, null);
             if (password == null) {
                 debug ("Unable to fetch password in libsecret keyring for %s", "com.github.pedromiguel_dev.journaling");

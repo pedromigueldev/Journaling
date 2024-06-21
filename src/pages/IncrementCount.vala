@@ -29,7 +29,7 @@ namespace Journaling.Pages {
                 new Vui.Button.from_icon_name ("go-previous-symbolic")
                     .css_classes ({"flat", "circular"})
                     .do(() => counter.state++),
-                new Vui.Label ( () =>  counter.state.to_string (), counter)
+                new Vui.Label.ref (() =>  counter.state.to_string (), counter)
                     .css_classes ({"title-1"}),
                 new Vui.Button.from_icon_name ("go-next-symbolic")
                     .css_classes ({"flat", "circular"})

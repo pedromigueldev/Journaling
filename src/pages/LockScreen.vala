@@ -18,46 +18,69 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 namespace Journaling.Pages {
-
     public Vui.Page Lock () {
+        var entry_password = new Vui.Store<string>("");
+
         return new Vui.Page("Locked")
             .child(
-                new Vui.VBox(
-                    new Vui.Label(() => "Journal is Locked")
-                        .css_classes({"title-1"}),
-                    new Vui.Label(() => "Use Password to View Journal."),
-                    new Vui.Button(
-                        new Vui.Label(() => "Unlock")
-                            .css_classes({"accent"})
-                    )
-                    .do(() =>
-                        new Vui.AlertDialog("Journal is locked", "")
-                            .add_action("Cancel", Adw.ResponseAppearance.DESTRUCTIVE)
-                            .add_action("Verify", Adw.ResponseAppearance.SUGGESTED)
-                            .child(
-                                new Vui.VBox(
-                                    new Vui.Entry("Type your password")
+                new Vui.ToolBar(
+                    new Vui.HeaderBar()
+                        .show_back_button(false)
+                        .show_title(false),
+                    new Vui.VBox(
+                        new Vui.Label("Journal is Locked")
+                            .css_classes({"title-1"}),
+                        new Vui.Label("Use Password to View Journal."),
+                        new Vui.Button(
+                            new Vui.Label("Unlock")
+                                .css_classes({"accent"})
+                        )
+                        .do(() =>
+                            new Vui.AlertDialog("Journal is locked", "")
+                                .add_action("Cancel", Adw.ResponseAppearance.DESTRUCTIVE)
+                                .add_action("Verify", Adw.ResponseAppearance.SUGGESTED)
+                                .child(
+                                    new Vui.VBox(
+                                        new Vui.Entry("Type your password", entry_password)
+                                    ).expand(true, true)
                                 )
-                                .expand(true, true)
-                            )
-                            .on_response((res) => {
-                                print("-----%s-----\n", res);
-
-                                var action = Vui.WidgetGeneric.simple_action_group.lookup_action("nav.pop");
-                                if (action != null) {
-                                    action.activate(null);
-                                } else {
-                                    print("Action %s not found\n", "navprint");
-                                }
-                            })
+                                .on_response((res) => password_look.begin(res, entry_password.state))
+                        )
+                        .css_classes({ "pill", "flat" })
                     )
-                    .css_classes({ "pill", "flat" })
+                    .spacing(20)
+                    .expand(true, true)
+                    .valign(Gtk.Align.CENTER)
+                    .halign(Gtk.Align.CENTER)
                 )
-                .spacing(20)
-                .expand(true, true)
-                .valign(Gtk.Align.CENTER)
-                .halign(Gtk.Align.CENTER)
             );
+    }
+
+    private async void password_look(string res, string password_entry){
+        print("-----%s-----\n", res);
+        if (res == "cancel") {
+            print("Canceled was selected.\n");
+            return;
+        }
+
+        string? password = null;
+
+        try {
+            password = yield PasswordManager.get_instance().lookup_password();
+        } catch (GLib.Error e) {
+            print("message: %s\n", e.message);
+        }
+
+        var pop = Vui.WidgetGeneric.simple_action_group.lookup_action("nav.pop");
+
+        if (password_entry == password) {
+            print("Passwords match.\n");
+            if (pop != null) {
+                pop.activate(null);
+            }
+        } else {
+            print("Passwords don't match\n");
+        }
     }
 
     private Gtk.Box _lock_icon() {

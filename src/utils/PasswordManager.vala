@@ -34,7 +34,6 @@ namespace Journaling {
             attributes["even"] = "true";
         }
 
-        public bool has_tried = false;
         private Secret.Schema password_schema = new Secret.Schema (
              "com.github.pedromiguel_dev.journaling",
              Secret.SchemaFlags.NONE,

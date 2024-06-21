@@ -43,28 +43,3 @@ namespace Journaling {
     }
 
 }
-namespace Journaling {
-    public class WindowOLD : Adw.ApplicationWindow {
-        private MainNavigation _main_navigation;
-
-        public WindowOLD (Application app) {
-            Object (application: app);
-            var settings = new GLib.Settings (app.application_id);
-
-            this.application = app;
-            this.icon_name = app.application_id;
-            this._main_navigation = new MainNavigation (settings, this);
-
-            _build_ui (settings);
-            settings.bind ("width", this, "default-width", SettingsBindFlags.DEFAULT); 
-            settings.bind ("height", this, "default-height", SettingsBindFlags.DEFAULT);
-        }
-
-        private void _build_ui (GLib.Settings settings) {
-            var handle = new Gtk.WindowHandle ();
-            handle.child = this._main_navigation;
-            this.content = handle;
-        }
-    }
-}
-

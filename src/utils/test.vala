@@ -50,7 +50,9 @@ namespace Vui {
         }
 
         public T css_classes (string[] css_classes) {
-            internal_widget.set_css_classes (css_classes);
+            foreach(var item in css_classes){
+                internal_widget.add_css_class (item);
+            }
             return this;
         }
     }
@@ -63,11 +65,11 @@ namespace Vui {
             get { return _state; }
             set {
                 _state = value;
-                state_set();
+                changed(value);
             }
         }
 
-        public signal void state_set();
+        public signal void changed(T state);
 
         public Store(T initial_state) {
             state = initial_state;
@@ -187,7 +189,7 @@ namespace Vui {
         public Label.ref (String? label = null, Store? state = null) {
             widget = new Gtk.Label (label());
             if(state != null)
-                state.state_set.connect (() => {
+                state.changed.connect (() => {
                    widget.label = label();
                 });
         }
@@ -196,6 +198,24 @@ namespace Vui {
             widget = new Gtk.Label (label);
         }
 
+    }
+
+    public class Image : WidgetGeneric<Image, Gtk.Image>{
+
+        public Image pixel_size (int size) {
+            this.widget.set_pixel_size (size);
+            return this;
+        }
+
+        public Image() {
+            this.widget = new Gtk.Image ();
+        }
+        public Image.from_icon_name (string? icon_name) {
+            this.widget = new Gtk.Image.from_icon_name (icon_name);
+        }
+        public Image.from_resource (string? resource_path) {
+            this.widget = new Gtk.Image.from_resource (resource_path);
+        }
     }
 
     public class Picture : WidgetGeneric<Picture, Gtk.Picture> {
@@ -234,6 +254,7 @@ namespace Vui {
         construct {
             widget = new Gtk.Button();
         }
+
         public Button (WidgetGeneric<WidgetGeneric, Gtk.Widget>? child = null) {
             widget.set_child (child.widget);
         }

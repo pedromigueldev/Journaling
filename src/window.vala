@@ -23,6 +23,7 @@ namespace Journaling {
 
     public AppWindow Window (Journaling.Application app) {
         var settings = new GLib.Settings (app.application_id);
+        var is_locked = new Vui.Store<bool>(true);
 
         return new AppWindow(app)
             .child (
@@ -30,15 +31,18 @@ namespace Journaling {
                     new Navigation (
                         Journaling.Pages.IncrementCount (),
                         Journaling.Pages.Home (),
-                        Journaling.Pages.Lock ()
+                        Journaling.Pages.Lock (is_locked)
                     )
+                    .on_popped((nav) => {
+                        if(is_locked.state == true) {nav.widget.push_by_tag ("Locked");}
+                    })
                     .add_action("print", () => print("this is a action\n"))
                 )
                 .expand(true, true)
             )
             .bind((window) => {
-                settings.bind ("width", window, "default-width", SettingsBindFlags.DEFAULT);
-                settings.bind ("height", window, "default-height", SettingsBindFlags.DEFAULT);
+                settings.bind ("width", window.widget, "default-width", SettingsBindFlags.DEFAULT);
+                settings.bind ("height", window.widget, "default-height", SettingsBindFlags.DEFAULT);
             });
     }
 

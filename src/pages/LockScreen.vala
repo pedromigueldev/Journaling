@@ -44,7 +44,7 @@ async void password_create(string res, string password_entry) {
     store.begin(password_entry);
 }
 
-async void password_look(string res, string password_entry, Vui.Store<bool> tried){
+async void password_look(string res, string password_entry, Vui.Store<bool> tried, Vui.Store<bool> is_locked){
     print("-----%s-----\n", res);
     if (res == "cancel") {
         print("Canceled was selected.\n");
@@ -63,6 +63,7 @@ async void password_look(string res, string password_entry, Vui.Store<bool> trie
 
     if (password_entry == password) {
         print("Passwords match.\n");
+        is_locked.state = false;
         if (pop != null) {
             pop.activate(null);
         }
@@ -87,57 +88,57 @@ Vui.VBox lock_icon() {
 
 
 namespace Journaling.Pages {
-public Vui.Page Lock () {
-    var message = new Vui.Store<string>("Use Password to View Journal.");
-    var entry_password = new Vui.Store<string>("");
-    var tried = new Vui.Store<bool>(false);
+    using Vui;
+    public Page Lock (Vui.Store<bool> is_locked) {
+        var message = new Store<string>("Use Password to View Journal.");
+        var entry_password = new Store<string>("");
+        var tried = new Store<bool>(false);
 
-    tried.changed.connect((tried, state) => {
-        if (state == true) {
-            print("state is true\n");
-            message.state = "Password was wrong";
-        } else {
-            print("state is false\n");
-        }
-    });
+        tried.changed.connect((tried, state) => {
+            if (state == true) {
+                print("state is true\n");
+                message.state = "Password was wrong";
+            }
+        });
 
-    return new Vui.Page("Locked")
-        .child(
-            new Vui.ToolBar(
-                new Vui.HeaderBar()
-                    .show_back_button(false)
-                    .show_title(false),
-                new Vui.VBox(
-                    lock_icon(),
-                    new Vui.Label("Journal is Locked")
-                        .css_classes({"title-1"}),
-                    new Vui.Label.ref(() => message.state, message),
-                    new Vui.Button(
-                        new Vui.Label("Unlock")
+        return new Page("Locked")
+            .child(
+                new ToolBar(
+                    new HeaderBar()
+                        .show_back_button(false)
+                        .show_title(false),
+                    new VBox(
+                        lock_icon(),
+                        new Label("Journal is Locked")
+                            .css_classes({"title-1"}),
+                        new Label.ref(() => message.state, message),
+                        new Button(
+                            new Label("Unlock")
+                            .halign(Gtk.Align.CENTER)
+                        )
+                        .css_classes({ "pill", "text-button", "suggested-action" })
                         .halign(Gtk.Align.CENTER)
+                        .do(() =>
+                            new AlertDialog("Journal is locked", "")
+                                .add_action("Cancel", Adw.ResponseAppearance.DESTRUCTIVE)
+                                .add_action("Verify", Adw.ResponseAppearance.SUGGESTED)
+                                .child(
+                                    new VBox(
+                                        lock_icon().margins(10, 0, 25, 0),
+                                        new Spacer(),
+                                        new Vui.Entry("Type your password", entry_password)
+                                    ).expand(true, true)
+                                )
+                                .on_response((res) => password_look.begin(res, entry_password.state, tried, is_locked))
+                        )
                     )
-                    .css_classes({ "pill", "text-button", "suggested-action" })
+                    .spacing(20)
+                    .expand(true, true)
+                    .valign(Gtk.Align.CENTER)
                     .halign(Gtk.Align.CENTER)
-                    .do(() =>
-                        new Vui.AlertDialog("Journal is locked", "")
-                            .add_action("Cancel", Adw.ResponseAppearance.DESTRUCTIVE)
-                            .add_action("Verify", Adw.ResponseAppearance.SUGGESTED)
-                            .child(
-                                new Vui.VBox(
-                                    lock_icon().margins(10, 0, 25, 0),
-                                    new Vui.Spacer(),
-                                    new Vui.Entry("Type your password", entry_password)
-                                ).expand(true, true)
-                            )
-                            .on_response((res) => password_look.begin(res, entry_password.state, tried))
-                    )
                 )
-                .spacing(20)
-                .expand(true, true)
-                .valign(Gtk.Align.CENTER)
-                .halign(Gtk.Align.CENTER)
             )
-        );
-    }
+            .can_pop(false);
+        }
 }
 

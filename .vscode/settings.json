@@ -1,4 +1,5 @@
 {
+    "vala.languageServerPath": "${workspaceFolder}/.flatpak/vala-language-server.sh",
     "files.watcherExclude": {
         "**/.git/objects/**": true,
         "**/.git/subtree-cache/**": true,
@@ -6,9 +7,5 @@
         "**/.hg/store/**": true,
         ".flatpak/**": true,
         "_build/**": true
-    },
-    "mesonbuild.configureOnOpen": false,
-    "mesonbuild.buildFolder": "_build",
-    "mesonbuild.mesonPath": "${workspaceFolder}/.flatpak/meson.sh",
-    "vala.languageServerPath": "${workspaceFolder}/.flatpak/vala-language-server.sh"
+    }
 }

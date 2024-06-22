@@ -83,9 +83,9 @@ namespace Vui {
             return this;
         }
 
-        protected delegate void Bind_handler (Adw.ApplicationWindow window);
+        protected delegate void Bind_handler (AppWindow window);
         public AppWindow bind (Bind_handler handle){
-            handle(this.widget);
+            handle(this);
             return this;
         }
 
@@ -103,18 +103,33 @@ namespace Vui {
     }
 
     public class Navigation : WidgetGeneric<Navigation, Adw.NavigationView> {
-        protected delegate void Action (Adw.NavigationView nav);
+        public Vui.Page[] push_later_array;
+
+        protected delegate void Action (Navigation nav);
 
         public Navigation bind (Action handle){
-            handle(widget);
+            handle(this);
             return this;
         }
 
         public Navigation add_action (string action_name, Action handle) {
             var new_action = new SimpleAction("nav." + action_name, null);
-            new_action.activate.connect(() => handle(this.widget));
+            new_action.activate.connect(() => handle(this));
 
             simple_action_group.add_action(new_action);
+            return this;
+        }
+
+        public Navigation on_popped (owned Action handle) {
+            this.widget.popped.connect ((nav) => handle(this));
+            return this;
+        }
+
+        public Navigation push_later (params Vui.Page[] c) {
+            foreach (var item in c){
+                widget.add (item.widget);
+                print("page %s added\n", item.widget.tag);
+            }
             return this;
         }
 
@@ -126,11 +141,16 @@ namespace Vui {
                 print("page %s added\n", item.widget.tag);
             }
 
-            this.add_action ("pop", (nav) => nav.pop ());
+            this.add_action ("pop", (nav) => nav.widget.pop ());
         }
     }
 
     public class Page : WidgetGeneric<Page, Adw.NavigationPage> {
+
+        public Page can_pop (bool can_pop) {
+            this.widget.can_pop = can_pop;
+            return this;
+        }
 
         public Page child (WidgetGeneric<WidgetGeneric, Gtk.Widget> c) {
             widget.set_child (c.widget);

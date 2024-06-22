@@ -17,21 +17,21 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-
+using Vui;
 namespace Journaling.Pages {
 
-    public Vui.Page IncrementCount () {
-        var counter = new Vui.Store<int>(0);
+    public Page IncrementCount () {
+        var counter = new Store<int>(0);
 
-        return new Vui.Page ("Incremment")
+        return new Page ("Incremment")
         .child (
-            new Vui.VBox(
-                new Vui.Button.from_icon_name ("go-previous-symbolic")
+            new VBox(
+                new Button.from_icon_name ("go-previous-symbolic")
                     .css_classes ({"flat", "circular"})
                     .do(() => counter.state++),
-                new Vui.Label.ref (() =>  counter.state.to_string (), counter)
+                new Label.ref (() =>  counter.state.to_string (), counter)
                     .css_classes ({"title-1"}),
-                new Vui.Button.from_icon_name ("go-next-symbolic")
+                new Button.from_icon_name ("go-next-symbolic")
                     .css_classes ({"flat", "circular"})
                     .do(() => counter.state--)
             )

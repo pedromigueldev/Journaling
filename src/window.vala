@@ -22,28 +22,29 @@ namespace Journaling {
     using Vui;
 
     public AppWindow Window (Journaling.Application app) {
-        var settings = new GLib.Settings (app.application_id);
         var is_locked = new Vui.Store<bool>(true);
 
         return new AppWindow(app)
             .child (
                 new HBox (
                     new Navigation (
-                        Journaling.Pages.IncrementCount (),
-                        Journaling.Pages.Home (),
-                        Journaling.Pages.Lock (is_locked)
+                        Journaling.Pages.Lock (is_locked).can_pop(false)
                     )
-                    .on_popped((nav) => {
-                        if(is_locked.state == true) {nav.widget.push_by_tag ("Locked");}
+                    .push_later(
+                        Journaling.Pages.IncrementCount(),
+                        Journaling.Pages.Home ().can_pop (false)
+                    )
+                    .on_pushed((nav) => {
+                        if(is_locked.state == true) {nav.widget.pop ();}
                     })
+                    .add_action("push.home", (nav) => nav.widget.push_by_tag ("Home"))
                     .add_action("print", () => print("this is a action\n"))
                 )
                 .expand(true, true)
             )
-            .bind((window) => {
-                settings.bind ("width", window.widget, "default-width", SettingsBindFlags.DEFAULT);
-                settings.bind ("height", window.widget, "default-height", SettingsBindFlags.DEFAULT);
-            });
+            .save("width", "default-width", SettingsBindFlags.DEFAULT)
+            .save ("height", "default-height", GLib.SettingsBindFlags.DEFAULT)
+            ;
     }
 
 }

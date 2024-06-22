@@ -2,19 +2,20 @@ namespace Vui {
 
     [GenericAccessors]
     public interface Widget<T>{
-        public virtual T spacing (int spacing){return this;}
-        public virtual T expand (bool hexpand, bool vexpand){return this;}
-        public virtual T valign (Gtk.Align align){return this;}
-        public virtual T halign (Gtk.Align align){return this;}
-        public virtual T margins (int top, int left, int bottom, int right){return this;}
-        public virtual T css_classes (string[] css_classes){return this;}
-        public virtual T height_request (int height) {return this;}
+        public abstract T expand (bool hexpand, bool vexpand);
+        public abstract T valign (Gtk.Align align);
+        public abstract T halign (Gtk.Align align);
+        public abstract T margins (int top, int left, int bottom, int right);
+        public abstract T css_classes (string[] css_classes);
+        public abstract T height_request (int height);
+        public abstract T save (string key, string property, GLib.SettingsBindFlags flag);
     }
 
     public interface AnyWidget : WidgetGeneric<WidgetGeneric, Gtk.Widget>{}
 
     public abstract class WidgetGeneric<T, G> : Widget<T>, GLib.Object  {
         public static SimpleActionGroup simple_action_group = new SimpleActionGroup();
+        public static GLib.Settings gsettings;
 
         private G _widget;
 
@@ -53,6 +54,16 @@ namespace Vui {
             foreach(var item in css_classes){
                 internal_widget.add_css_class (item);
             }
+            return this;
+        }
+
+        public T height_request (int height) {
+            internal_widget.height_request = height;
+            return this;
+        }
+
+        public T save (string key, string property, GLib.SettingsBindFlags flag) {
+            WidgetGeneric.gsettings.bind (key, this.internal_widget, property, flag);
             return this;
         }
     }
@@ -97,18 +108,25 @@ namespace Vui {
         }
 
         public AppWindow (Gtk.Application app) {
+            if(WidgetGeneric.gsettings == null)
+                WidgetGeneric.gsettings = new GLib.Settings (app.get_application_id ());
             widget = new Adw.ApplicationWindow (app);
             widget.icon_name = app.application_id;
         }
     }
 
     public class Navigation : WidgetGeneric<Navigation, Adw.NavigationView> {
-        public Vui.Page[] push_later_array;
-
         protected delegate void Action (Navigation nav);
 
         public Navigation bind (Action handle){
             handle(this);
+            return this;
+        }
+
+        public Navigation on_pushed (owned Action handle){
+            this.widget.pushed.connect (() => {
+                handle(this);
+            });
             return this;
         }
 
@@ -117,11 +135,6 @@ namespace Vui {
             new_action.activate.connect(() => handle(this));
 
             simple_action_group.add_action(new_action);
-            return this;
-        }
-
-        public Navigation on_popped (owned Action handle) {
-            this.widget.popped.connect ((nav) => handle(this));
             return this;
         }
 
@@ -148,7 +161,7 @@ namespace Vui {
     public class Page : WidgetGeneric<Page, Adw.NavigationPage> {
 
         public Page can_pop (bool can_pop) {
-            this.widget.can_pop = can_pop;
+            this.widget.set_can_pop (can_pop);
             return this;
         }
 
@@ -239,11 +252,6 @@ namespace Vui {
     }
 
     public class Picture : WidgetGeneric<Picture, Gtk.Picture> {
-
-        public Picture height_request (int height) {
-            widget.height_request = height;
-            return this;
-        }
 
         public Picture () {
           widget = new Gtk.Picture();

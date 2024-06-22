@@ -59,7 +59,7 @@ async void password_look(string res, string password_entry, Vui.Store<bool> trie
         print("message: %s\n", e.message);
     }
 
-    var pop = Vui.WidgetGeneric.simple_action_group.lookup_action("nav.pop");
+    var pop = Vui.WidgetGeneric.simple_action_group.lookup_action("nav.push.home");
 
     if (password_entry == password) {
         print("Passwords match.\n");
@@ -137,8 +137,8 @@ namespace Journaling.Pages {
                     .valign(Gtk.Align.CENTER)
                     .halign(Gtk.Align.CENTER)
                 )
-            )
-            .can_pop(false);
+            );
         }
 }
+
 

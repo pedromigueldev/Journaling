@@ -19,6 +19,26 @@
  */
 
 using Vui;
+namespace Journaling.Pages {
+    public Vui.Page Home () {
+        return new Vui.Page ("Home")
+            .child(
+                new ToolBar(
+                    new HeaderBar()
+                        .show_back_button(false)
+                        .show_title(false),
+                    new VBox(
+                        _title_box_mount(),
+                        _overlay_mount())
+                        .spacing(10)
+                        .expand(true, true)
+                        .valign(Gtk.Align.FILL)
+                        .halign(Gtk.Align.FILL)
+                        .margins(0, 20, 0, 20))
+
+            );
+    }
+}
 
 private Overlay _overlay_mount() {
     return new Overlay()
@@ -29,6 +49,20 @@ private Overlay _overlay_mount() {
                 .margins(0, 0, 20, 0)
                 .expand(true, false)
                 .css_classes({"fill", "circular", "suggested-action", "filter-icon" })
+                .do(() =>
+                    new Vui.Dialog ()
+                    .title ("New Dialog")
+                    .content_size (600, 450)
+                    .child (
+                        new Vui.ToolBar (
+                            new Vui.HeaderBar (),
+                            new Vui.VBox (
+                                new Vui.Label("TESTE DE LABEL").css_classes ({"title-1"})
+                            )
+                            .valign(Gtk.Align.CENTER)
+                        )
+                    )
+                )
         )
         .set_child(
             new ScrolledBox (
@@ -106,26 +140,5 @@ private Bin _entry_card(string text) {
     return new Bin(entry_card)
         .css_classes({"card", "activatable"})
         .overflow(Gtk.Overflow.HIDDEN);
-}
-
-namespace Journaling.Pages {
-    public Vui.Page Home () {
-        return new Vui.Page ("Home")
-            .child(
-                new ToolBar(
-                    new HeaderBar()
-                        .show_back_button(false)
-                        .show_title(false),
-                    new VBox(
-                        _title_box_mount(),
-                        _overlay_mount())
-                        .spacing(10)
-                        .expand(true, true)
-                        .valign(Gtk.Align.FILL)
-                        .halign(Gtk.Align.FILL)
-                        .margins(0, 20, 0, 20))
-
-            );
-    }
 }
 

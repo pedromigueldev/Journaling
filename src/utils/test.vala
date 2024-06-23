@@ -266,14 +266,13 @@ namespace Vui {
 
     }
 
+
     public class Button : WidgetGeneric<Button, Gtk.Button> {
         protected delegate void action ();
-
         public Button do(owned action actions){
             widget.clicked.connect (() => actions());
             return this;
         }
-
         public Button (WidgetGeneric<WidgetGeneric, Gtk.Widget>? child = null) {
             widget = new Gtk.Button();
             widget.set_child (child.widget);
@@ -338,6 +337,39 @@ namespace Vui {
         public MenuButton (WidgetGeneric<WidgetGeneric, Gtk.Widget> popover) {
             var ppvr = new Gtk.Popover () { child = popover.widget };
             widget = new Gtk.MenuButton () { popover = ppvr};
+        }
+    }
+
+    public class Dialog :  WidgetGeneric<Navigation, Adw.Dialog> {
+        public Dialog title (string title) {
+            this.widget.set_title (title);
+            return this;
+        }
+
+        public Dialog content_size (int width, int height) {
+            this.widget.set_content_width (width);
+            this.widget.set_content_height (height);
+            return this;
+        }
+
+        public Dialog follows_content_size(bool does_it) {
+            this.widget.follows_content_size = does_it;
+            return this;
+        }
+
+        public Dialog child (WidgetGeneric<WidgetGeneric, Gtk.Widget> c) {
+            this.widget.set_child (c.widget);
+            return this;
+        }
+        public Dialog () {
+            var content = new Vui.VBox ();
+            this.widget = new Adw.Dialog () {
+			    child = content.widget,
+			    content_width = 600,
+			    content_height = 550
+            };
+            this.widget.present(Vui.App._active_window_);
+            this.widget.show();
         }
     }
 

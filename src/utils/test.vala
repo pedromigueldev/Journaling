@@ -1,7 +1,7 @@
 namespace Vui {
 
     [GenericAccessors]
-    public interface Widget<T>{
+    protected interface Widget<T>{
         public abstract T expand (bool hexpand, bool vexpand);
         public abstract T valign (Gtk.Align align);
         public abstract T halign (Gtk.Align align);
@@ -10,8 +10,6 @@ namespace Vui {
         public abstract T height_request (int height);
         public abstract T save (string key, string property, GLib.SettingsBindFlags flag);
     }
-
-    public interface AnyWidget : WidgetGeneric<WidgetGeneric, Gtk.Widget>{}
 
     public abstract class WidgetGeneric<T, G> : Widget<T>, GLib.Object  {
         public static SimpleActionGroup simple_action_group = new SimpleActionGroup();
@@ -87,6 +85,10 @@ namespace Vui {
         }
     }
 
+    public class App : Adw.Application {
+        public static Gtk.Window _active_window_;
+    }
+
     public class AppWindow : WidgetGeneric<AppWindow, Adw.ApplicationWindow> {
 
         public AppWindow child (WidgetGeneric<WidgetGeneric, Gtk.Widget> c) {
@@ -100,14 +102,7 @@ namespace Vui {
             return this;
         }
 
-        public AppWindow handle () {
-            var handle = new Gtk.WindowHandle ();
-            handle.child = this.widget.child;
-            widget.set_child (handle);
-            return this;
-        }
-
-        public AppWindow (Gtk.Application app) {
+        public AppWindow (Adw.Application app) {
             if(WidgetGeneric.gsettings == null)
                 WidgetGeneric.gsettings = new GLib.Settings (app.get_application_id ());
             widget = new Adw.ApplicationWindow (app);
@@ -279,11 +274,8 @@ namespace Vui {
             return this;
         }
 
-        construct {
-            widget = new Gtk.Button();
-        }
-
         public Button (WidgetGeneric<WidgetGeneric, Gtk.Widget>? child = null) {
+            widget = new Gtk.Button();
             widget.set_child (child.widget);
         }
         public Button.from_icon_name (string icon_name) {
@@ -372,7 +364,7 @@ namespace Vui {
 
         public AlertDialog (string title, string description) {
             widget = new Adw.AlertDialog (title, description);
-            this.widget.present(Journaling.Application.active_window_);
+            this.widget.present(Vui.App._active_window_);
             this.widget.show();
         }
     }
@@ -437,5 +429,6 @@ namespace Vui {
         }
     }
 }
+
 
 

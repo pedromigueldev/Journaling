@@ -21,7 +21,7 @@
 namespace Journaling {
     using Vui;
 
-    public AppWindow Window (Journaling.Application app) {
+    public AppWindow Window (Adw.Application app) {
         var is_locked = new Vui.Store<bool>(true);
 
         return new AppWindow(app)
@@ -44,7 +44,7 @@ namespace Journaling {
             )
             .save("width", "default-width", SettingsBindFlags.DEFAULT)
             .save ("height", "default-height", GLib.SettingsBindFlags.DEFAULT)
-            ;
+        ;
     }
 
 }

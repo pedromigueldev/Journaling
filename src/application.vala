@@ -19,8 +19,8 @@
  */
 
 namespace Journaling {
-    public class Application : Adw.Application {
-        public static Gtk.Window active_window_;
+
+    public class Application : Vui.App {
 
         public Application () {
             Object (application_id: "com.github.pedromiguel_dev.journaling", flags: ApplicationFlags.DEFAULT_FLAGS);
@@ -38,12 +38,11 @@ namespace Journaling {
 
         public override void activate () {
             base.activate ();
-            // _settings = new Settings (application_id);
 
             var Window = this.active_window;
             if (Window == null) {
-                active_window_ = Journaling.Window (this).widget;
-                Window = active_window_;
+                _active_window_ = Journaling.Window (this).widget;
+                Window = _active_window_;
             }
             Window.present ();
         }
@@ -68,3 +67,4 @@ namespace Journaling {
         }
     }
 }
+

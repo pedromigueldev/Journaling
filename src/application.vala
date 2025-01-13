@@ -1,6 +1,6 @@
 /* application.vala
  *
- * Copyright 2024 Pedro Miguel
+ * Copyright 2024-2025 Pedro Miguel
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 namespace Journaling {
 
-    public class Application : Vui.App {
+    public class Application : Adw.Application {
 
         public Application () {
             Object (application_id: "com.github.pedromiguel_dev.journaling", flags: ApplicationFlags.DEFAULT_FLAGS);
@@ -33,7 +33,7 @@ namespace Journaling {
                 { "quit", this.quit }
             };
             this.add_action_entries (action_entries, this);
-            this.set_accels_for_action ("app.quit", {"<primary>q"});
+            this.set_accels_for_action ("app.quit", { "<primary>q" });
         }
 
         public override void activate () {
@@ -41,8 +41,8 @@ namespace Journaling {
 
             var Window = this.active_window;
             if (Window == null) {
-                _active_window_ = Journaling.Window (this).widget;
-                Window = _active_window_;
+                // _active_window_ = Journaling.win(this)._root;
+                // Window = Journaling.win (this)._widget;
             }
             Window.present ();
         }
@@ -67,4 +67,3 @@ namespace Journaling {
         }
     }
 }
-

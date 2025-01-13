@@ -1,4 +1,4 @@
-namespace Vui {
+namespace VuiDepr {
 
     [GenericAccessors]
     protected interface Widget<T>{
@@ -110,6 +110,65 @@ namespace Vui {
         }
     }
 
+
+    public struct WidgetGenericStruct<G> {
+        public G _widget;
+    }
+
+    public struct AppWindowS : WidgetGenericStruct<Adw.ApplicationWindow> {
+
+        public AppWindowS child (WidgetGenericStruct<Gtk.Widget> c) {
+            _widget.set_content (c._widget);
+            return this;
+        }
+
+        public AppWindowS (Adw.Application app) {
+            _widget = new Adw.ApplicationWindow (app);
+            _widget.icon_name = app.application_id;
+        }
+    }
+
+    protected delegate unowned void Action ();
+    public struct ButtonS : WidgetGenericStruct<Gtk.Button> {
+
+        public ButtonS () {
+            _widget = new Gtk.Button();
+        }
+        public ButtonS.from_icon_name (string icon_name) {
+            _widget = new Gtk.Button.from_icon_name(icon_name);
+        }
+        public ButtonS.with_label (string label) {
+            _widget = new Gtk.Button.with_label (label);
+        }
+        public ButtonS on_click (Action action){
+            this._widget.clicked.connect (action);
+            return this;
+        }
+
+    }
+
+    public struct Window {
+        Adw.ApplicationWindow _root;
+        Gtk.Widget child;
+
+        public Window() {
+        }
+    }
+
+     public struct Buttons {
+        Gtk.Button _root;
+
+        Gtk.Widget child;
+
+        public Gtk.Button build() {
+            return _root;
+        }
+
+        public Buttons(string str) {
+            _root = new Gtk.Button.with_label(str);
+        }
+    }
+
     public class Navigation : WidgetGeneric<Navigation, Adw.NavigationView> {
         protected delegate void Action (Navigation nav);
 
@@ -133,7 +192,7 @@ namespace Vui {
             return this;
         }
 
-        public Navigation push_later (params Vui.Page[] c) {
+        public Navigation push_later (params VuiDepr.Page[] c) {
             foreach (var item in c){
                 widget.add (item.widget);
                 print("page %s added\n", item.widget.tag);
@@ -141,7 +200,7 @@ namespace Vui {
             return this;
         }
 
-        public Navigation (params Vui.Page[] c) {
+        public Navigation (params VuiDepr.Page[] c) {
             widget = new Adw.NavigationView ();
             foreach (var item in c){
                 this.widget.push (item.widget);
@@ -362,13 +421,13 @@ namespace Vui {
             return this;
         }
         public Dialog () {
-            var content = new Vui.VBox ();
+            var content = new VuiDepr.VBox ();
             this.widget = new Adw.Dialog () {
 			    child = content.widget,
 			    content_width = 600,
 			    content_height = 550
             };
-            this.widget.present(Vui.App._active_window_);
+            this.widget.present(VuiDepr.App._active_window_);
             this.widget.show();
         }
     }
@@ -396,7 +455,7 @@ namespace Vui {
 
         public AlertDialog (string title, string description) {
             widget = new Adw.AlertDialog (title, description);
-            this.widget.present(Vui.App._active_window_);
+            this.widget.present(VuiDepr.App._active_window_);
             this.widget.show();
         }
     }
@@ -413,6 +472,18 @@ namespace Vui {
                 });
         }
     }
+
+    // public struct EntryS {
+    //     Gtk.Entry _root;
+    //     public EntryS(string s, Store<string>? write_to = null) {
+    //         _root = new Gtk.Entry();
+    //         if(write_to != null)
+    //             _root.changed.connect (() => {
+    //                 print("typed: %s\n", this.widget.text);
+    //                write_to.state = this.widget.text;
+    //             });
+    //     }
+    // }
 
     public class Overlay : WidgetGeneric<Overlay, Gtk.Overlay> {
         public Overlay set_overlay (WidgetGeneric<WidgetGeneric, Gtk.Widget> overlay) {
@@ -461,6 +532,5 @@ namespace Vui {
         }
     }
 }
-
 
 

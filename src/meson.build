@@ -17,6 +17,7 @@ journaling_sources = [
 journaling_deps = [
   dependency('libsecret-1'),
   dependency('gtk4'),
+  dependency('vui'),
   dependency('libadwaita-1', version: '>= 1.5'),
 ]
 

@@ -19,6 +19,8 @@
  */
 
 int main (string[] args) {
-    var app = new Journaling.Application ();
+    var app = new Vui.Widget.App ("com.github.pedromiguel_dev.journaling") {
+        content = (app) => Journaling.Window (app)
+    };
     return app.run (args);
 }

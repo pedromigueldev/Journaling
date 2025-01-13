@@ -17,7 +17,7 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-using Vui;
+using VuiDepr;
 namespace Journaling.Pages {
 
     public Page IncrementCount () {

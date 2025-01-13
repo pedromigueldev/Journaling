@@ -1,6 +1,6 @@
 /* window.vala
  *
- * Copyright 2024 Pedro Miguel
+ * Copyright 2024-2025 Pedro Miguel
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,32 +19,20 @@
  */
 
 namespace Journaling {
-    using Vui;
+    using Vui.Widget;
 
-    public AppWindow Window (Adw.Application app) {
-        var is_locked = new Vui.Store<bool>(true);
+    public Vui.Widget.Window Window (Adw.Application app) {
+        var is_locked = new Vui.Model.Store<bool> (true);
 
-        return new AppWindow(app)
-            .child (
-                new HBox (
-                    new Navigation (
-                        Journaling.Pages.Lock (is_locked).can_pop(false)
-                    )
-                    .push_later(
-                        Journaling.Pages.IncrementCount(),
-                        Journaling.Pages.Home ().can_pop (false)
-                    )
-                    .on_pushed((nav) => {
-                        if(is_locked.state == true) {nav.widget.pop ();}
-                    })
-                    .add_action("push.home", (nav) => nav.widget.push_by_tag ("Home"))
-                    .add_action("print", () => print("this is a action\n"))
-                )
-                .expand(true, true)
-            )
-            .save("width", "default-width", SettingsBindFlags.DEFAULT)
-            .save ("height", "default-height", GLib.SettingsBindFlags.DEFAULT)
-        ;
+        return new Vui.Widget.Window (app) {
+                   expand = { true, true },
+                   content = new Navigation () {
+                       expand = { true, true },
+                       pages = {
+                           new Journaling.Pages.LockScreen (),
+                           Journaling.Pages.Home (),
+                       }
+                   }
+        };
     }
-
 }

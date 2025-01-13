@@ -1,7 +1,7 @@
 {
     "id" : "com.github.pedromiguel_dev.journaling",
     "runtime" : "org.gnome.Platform",
-    "runtime-version" : "46",
+    "runtime-version" : "47",
     "sdk" : "org.gnome.Sdk",
     "sdk-extensions" : [
         "org.freedesktop.Sdk.Extension.vala"
@@ -16,7 +16,8 @@
     ],
     "build-options" : {
         "append-path" : "/usr/lib/sdk/vala/bin",
-        "prepend-ld-library-path" : "/usr/lib/sdk/vala/lib" 
+        "prepend-ld-library-path" : "/usr/lib/sdk/vala/lib",
+        "env" : {        }
     },
     "cleanup" : [
         "/include",
@@ -31,6 +32,17 @@
         "*.a"
     ],
     "modules" : [
+    	{
+            "name" : "vui",
+            "builddir" : true,
+            "buildsystem" : "meson",
+            "sources" : [
+                {
+                    "type" : "git",
+                    "url" : "https://github.com/pedromigueldev/vui/"
+                }
+            ]
+        },
         {
             "name" : "journaling",
             "builddir" : true,
@@ -38,8 +50,11 @@
             "sources" : [
                 {
                     "type" : "git",
-                    "url" : "file:///var/home/pedromiguel-dev/Projetos"
+                    "url" : "."
                 }
+            ],
+            "config-opts" : [
+                "--libdir=lib"
             ]
         }
     ]
